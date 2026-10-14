@@ -15,7 +15,7 @@ Edite `team.json` para registrar apenas alterações confirmadas na equipe. Cada
 - Ralts recebe dano neutro de Sombrio (Psíquico/Fada).
 - Tirtouga e Gligar recebem dano neutro de Pedra; Honedge resiste ao tipo.
 - Tirtouga tem fraqueza 4× a Planta por tipos; Solid Rock resulta em 3× de dano.
-- Nenhum movimento futuro é considerado. Lapras permanece com Shell Armor.
+- Nenhum movimento futuro é considerado. Lapras possui Water Absorb confirmado: imunidade a Água por habilidade e recuperação de HP; a tipagem Água/Gelo sozinha resiste ½×.
 - Multiplicadores não garantem trocas seguras nem incorporam HP, atributos, itens ou cobertura adversária.
 
 ## Verificação

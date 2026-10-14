@@ -8,8 +8,8 @@
     "body": "Tirtouga resiste muito bem a Fogo, mas é especialmente vulnerável a Planta. Evite expor Honedge."
   },
   "Água": {
-    "title": "Lapras resiste. Não absorve.",
-    "body": "A habilidade registrada é Shell Armor. Não conte com Water Absorb para anular o ataque ou recuperar HP."
+    "title": "Lapras absorve Água e recupera HP.",
+    "body": "Water Absorb concede imunidade por habilidade e recupera HP ao receber um golpe de Água. A tipagem Água/Gelo, sozinha, oferece resistência de ½×, não imunidade. Confira a cobertura adversária antes de trocar."
   },
   "Elétrico": {
     "title": "Gligar anula o ataque.",
