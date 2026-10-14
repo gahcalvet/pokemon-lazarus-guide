@@ -1,20 +1,74 @@
 {
-  "Normal": "Honedge é imune a golpes Normais comuns; atenção a habilidades que mudam essa interação.",
-  "Fogo": "Honedge é fraco a Fogo; Tirtouga resiste, mas desconfie de golpes de cobertura de Planta.",
-  "Água": "Torracat e Gligar são fracos a Água. Lapras tem Shell Armor no último registro: não presumir Water Absorb.",
-  "Elétrico": "Gligar é imune; Tirtouga e Lapras são fracos. Ainda não temos golpe ofensivo de Terra.",
-  "Planta": "Tirtouga tem fraqueza 4× por tipos; Solid Rock reduz o dano super efetivo para 3×. Torracat resiste a Planta.",
-  "Gelo": "Gligar leva 4×. Honedge resiste a Gelo, mas cuidado com golpes de Fogo ou Sombrio.",
-  "Lutador": "Honedge é imune. Ralts resiste ¼, mas tem pouca resistência bruta.",
-  "Veneno": "Honedge é imune. Ralts é fraco a Veneno.",
-  "Terra": "Gligar é imune. Torracat e Honedge são fracos; não arrisque sem considerar cobertura.",
-  "Voador": "Tirtouga resiste; Gligar recebe dano neutro apesar de ser Voador.",
-  "Psíquico": "Honedge resiste; Torracat ainda NÃO é Sombrio, apenas tem Knock Off.",
-  "Inseto": "Torracat, Honedge e Gligar resistem; Ralts recebe dano neutro (Fada resiste a Inseto).",
-  "Pedra": "Honedge resiste a Pedra. Gligar e Tirtouga recebem dano neutro por tipos; Torracat e Lapras são fracos.",
-  "Fantasma": "Torracat recebe dano neutro (não evoluiu para Incineroar). Honedge é fraco a Fantasma.",
-  "Dragão": "Ralts é imune; Honedge resiste. Lapras pode atingir com Ice Shard.",
-  "Sombrio": "Nenhum integrante resiste a Sombrio. Ralts recebe dano neutro: Psíquico e Fada se compensam. Honedge é fraco.",
-  "Aço": "Torracat resiste; Ralts é fraco. Fire Fang atinge Aço super efetivamente.",
-  "Fada": "Honedge resiste; não temos golpe Aço ou Veneno ofensivo confirmado no momento."
+  "Normal": {
+    "title": "Imunidade tem exceções.",
+    "body": "Honedge bloqueia Normal. Confira se alguma habilidade adversária permite atingir Fantasma."
+  },
+  "Fogo": {
+    "title": "Fique de olho na cobertura de Planta.",
+    "body": "Tirtouga resiste muito bem a Fogo, mas é especialmente vulnerável a Planta. Evite expor Honedge."
+  },
+  "Água": {
+    "title": "Lapras resiste. Não absorve.",
+    "body": "A habilidade registrada é Shell Armor. Não conte com Water Absorb para anular o ataque ou recuperar HP."
+  },
+  "Elétrico": {
+    "title": "Gligar anula o ataque.",
+    "body": "Tirtouga e Lapras são vulneráveis. Gligar é Terra, mas ainda não tem um golpe desse tipo para responder."
+  },
+  "Planta": {
+    "title": "Solid Rock ajuda, mas não resolve.",
+    "body": "A habilidade reduz o dano super efetivo em Tirtouga; a fraqueza a Planta continua muito alta."
+  },
+  "Gelo": {
+    "title": "Preserve Gligar.",
+    "body": "Sua dupla tipagem amplia a fraqueza a Gelo. Ao entrar com Honedge, confira possíveis golpes de Fogo ou Sombrio."
+  },
+  "Lutador": {
+    "title": "Ralts ainda é frágil.",
+    "body": "Ralts recebe só um quarto do dano por tipos, mas isso não compensa automaticamente sua fragilidade. Honedge é imune."
+  },
+  "Veneno": {
+    "title": "Evite expor Ralts.",
+    "body": "Ele é fraco a Veneno. Honedge anula esse tipo de ataque; confira os outros golpes do adversário."
+  },
+  "Terra": {
+    "title": "A imunidade de Gligar é a vantagem.",
+    "body": "Torracat e Honedge são vulneráveis a Terra. Antes da troca, confira a cobertura adversária."
+  },
+  "Voador": {
+    "title": "Gligar não resiste a Voador.",
+    "body": "Ele recebe dano neutro. As resistências do time são Honedge e Tirtouga."
+  },
+  "Psíquico": {
+    "title": "Knock Off não é proteção.",
+    "body": "Torracat ainda é apenas Fogo: recebe dano neutro de Psíquico, mesmo tendo um golpe Sombrio."
+  },
+  "Inseto": {
+    "title": "Ralts recebe dano neutro.",
+    "body": "A resistência de Fada compensa a fraqueza de Psíquico. Honedge recebe só um quarto do dano por tipos."
+  },
+  "Pedra": {
+    "title": "Gligar não resiste a Pedra.",
+    "body": "Gligar e Tirtouga não resistem a Pedra. Honedge resiste; Torracat e Lapras são vulneráveis."
+  },
+  "Fantasma": {
+    "title": "O time não tem uma resistência.",
+    "body": "Torracat recebe dano neutro. Honedge é fraco a Fantasma, mesmo tendo Pursuit para responder."
+  },
+  "Dragão": {
+    "title": "Lapras não resiste a Dragão.",
+    "body": "Ralts anula Dragão. Lapras tem Ice Shard super efetivo, mas recebe dano neutro desse tipo."
+  },
+  "Sombrio": {
+    "title": "Ralts não é uma resistência.",
+    "body": "Psíquico e Fada se compensam: o dano é neutro. Honedge é vulnerável, embora Fury Cutter seja super efetivo."
+  },
+  "Aço": {
+    "title": "Fire Fang ajuda na resposta.",
+    "body": "Torracat resiste a Aço e tem cobertura super efetiva. Ralts é vulnerável a esse tipo."
+  },
+  "Fada": {
+    "title": "Resistimos, mas falta cobertura.",
+    "body": "Torracat e Honedge resistem. Nenhum integrante tem um golpe ofensivo de Aço ou Veneno confirmado."
+  }
 }

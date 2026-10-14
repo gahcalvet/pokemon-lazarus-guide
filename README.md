@@ -21,3 +21,11 @@ Edite `team.json` para registrar apenas alterações confirmadas na equipe. Cada
 ## Verificação
 
 Abra `tests.html` no navegador para executar os testes de tipos e movimentos. Para desenvolvimento, sirva esta pasta com um servidor HTTP estático. A publicação usa GitHub Pages, branch `main`, pasta raiz.
+
+## Design · segunda edição
+
+Referências: Linear (https://linear.app/) para hierarquia e superfícies escuras; Living Pokédex Tracker (https://stephaniecervi.design/web-design/web-applications/living-pokedex-tracker/) para identificação visual do sexteto e adaptação ao celular. A identidade própria segue a ideia de um caderno de campo.
+
+Indicadores: 0× verde / imune; ¼× violeta / resiste muito; ½× azul / resiste. Todos mantêm o multiplicador textual. Os cuidados em `care.json` têm título e explicação, sem mudar a equipe.
+
+As ilustrações da equipe são carregadas como arquivos estáticos do repositório público PokeAPI/sprites; os ícones de tipos permanecem incorporados localmente. Nenhuma API paga é usada.
