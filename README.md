@@ -35,3 +35,12 @@ As ilustrações da equipe são carregadas como arquivos estáticos do repositó
 Selecione até dois tipos e desmarque clicando novamente; “Todos os tipos” limpa a seleção. Com dois tipos, as respostas ofensivas usam o produto dos dois multiplicadores. A defesa permanece separada por tipo de ataque, pois um Pokémon de dois tipos não combina esses tipos em um único golpe. A busca filtra linhas sem alterar a combinação selecionada; escolher um tipo limpa a busca.
 
 O grid de fundo usa uma máscara radial para desaparecer nas bordas; não intercepta cliques. A Pokébola fica alinhada e sem a contagem de parceiros/tipos.
+
+
+## Modo rápido inteligente
+
+`ranking.js` deriva os dois rankings de `team.json`, da tabela existente e de `battle-data.json` (referência por espécie, extraída da planilha de Nemo622 em 14/10/2026). Não há segunda equipe nem rankings escritos manualmente. Não altera o cálculo da tabela existente. Seleção vazia mostra uma instrução; um ou dois tipos mostram cartões e rankings recolhidos.
+
+Critérios lexicográficos, sem soma ponderada: defesa pelo pior multiplicador, depois pelo segundo, recuperação por Water Absorb, camadas de dominância conjunta de HP/Def/SpD, Intimidate/Parting Shot e resposta ofensiva. Entrada livre por efetividade, STAB, prioridade sustentada, velocidade base, setup e pivot em empate. Golpes condicionais não ganham bônus; os boosts de setup não são aplicados. Empates completos são explícitos.
+
+Limite conhecido: poder, precisão e categoria dos golpes não foram confirmados na fonte específica e ficam fora dos desempates; não inferir Ataque versus Ataque Especial sem categoria. Não prevê dano, ordem individual, EVs, itens, HP atual, cobertura ou habilidade adversária. Bases modificadas verificadas incluem Gligar 75/75/105/35/70/60 e Lapras 130/75/80/95/95/60. Falha na referência do modo rápido preserva o guia original. Novas espécies consultam o catálogo por nome; dados e efeitos novos não verificados são sinalizados, sem valores inventados. Atualizar a referência verificada quando houver nova versão do jogo.
