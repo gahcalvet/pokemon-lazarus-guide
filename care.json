@@ -1,0 +1,20 @@
+{
+  "Normal": "Honedge é imune a golpes Normais comuns; atenção a habilidades que mudam essa interação.",
+  "Fogo": "Honedge é fraco a Fogo; Tirtouga resiste, mas desconfie de golpes de cobertura de Planta.",
+  "Água": "Torracat e Gligar são fracos a Água. Lapras tem Shell Armor no último registro: não presumir Water Absorb.",
+  "Elétrico": "Gligar é imune; Tirtouga e Lapras são fracos. Ainda não temos golpe ofensivo de Terra.",
+  "Planta": "Tirtouga tem fraqueza 4× por tipos; Solid Rock reduz o dano super efetivo para 3×. Torracat resiste a Planta.",
+  "Gelo": "Gligar leva 4×. Honedge resiste a Gelo, mas cuidado com golpes de Fogo ou Sombrio.",
+  "Lutador": "Honedge é imune. Ralts resiste ¼, mas tem pouca resistência bruta.",
+  "Veneno": "Honedge é imune. Ralts é fraco a Veneno.",
+  "Terra": "Gligar é imune. Torracat e Honedge são fracos; não arrisque sem considerar cobertura.",
+  "Voador": "Tirtouga resiste; Gligar recebe dano neutro apesar de ser Voador.",
+  "Psíquico": "Honedge resiste; Torracat ainda NÃO é Sombrio, apenas tem Knock Off.",
+  "Inseto": "Torracat, Honedge e Gligar resistem; Ralts recebe dano neutro (Fada resiste a Inseto).",
+  "Pedra": "Honedge resiste a Pedra. Gligar e Tirtouga recebem dano neutro por tipos; Torracat e Lapras são fracos.",
+  "Fantasma": "Torracat recebe dano neutro (não evoluiu para Incineroar). Honedge é fraco a Fantasma.",
+  "Dragão": "Ralts é imune; Honedge resiste. Lapras pode atingir com Ice Shard.",
+  "Sombrio": "Nenhum integrante resiste a Sombrio. Ralts recebe dano neutro: Psíquico e Fada se compensam. Honedge é fraco.",
+  "Aço": "Torracat resiste; Ralts é fraco. Fire Fang atinge Aço super efetivamente.",
+  "Fada": "Honedge resiste; não temos golpe Aço ou Veneno ofensivo confirmado no momento."
+}

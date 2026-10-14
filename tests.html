@@ -1,0 +1,20 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes · Lazarus</title><style>body{background:#111418;color:#d4ece0;font:15px monospace;padding:30px}pre{white-space:pre-wrap}</style><h1>Verificação de matchups</h1><pre id="result">Executando…</pre><script src="types.js"></script><script>
+fetch('team.json').then(r=>r.json()).then(({team})=>{let passed=0;const results=[];const test=(name,fn)=>{if(!fn())throw Error(name);passed++;results.push('✓ '+name)};const get=n=>team.find(p=>p.name===n);
+test('18 tipos, cada um com ícone',()=>Object.keys(TYPES).length===18);
+test('Gligar imune a Terra e Elétrico',()=>['ground','electric'].every(t=>effectiveness(t,get('Gligar').types)===0));
+test('Gligar recebe 4× de Gelo',()=>effectiveness('ice',get('Gligar').types)===4);
+test('Honedge imune a Normal, Lutador e Veneno',()=>['normal','fighting','poison'].every(t=>effectiveness(t,get('Honedge').types)===0));
+test('Honedge resiste ¼ a Inseto',()=>effectiveness('bug',get('Honedge').types)===.25);
+test('Ralts imune a Dragão, ¼ Lutador, neutro Sombrio e Inseto',()=>effectiveness('dragon',get('Ralts').types)===0&&effectiveness('fighting',get('Ralts').types)===.25&&effectiveness('dark',get('Ralts').types)===1&&effectiveness('bug',get('Ralts').types)===1);
+test('Tirtouga: Planta 4× por tipos, 3× com Solid Rock',()=>effectiveness('grass',get('Tirtouga').types)===4&&damageTaken('grass',get('Tirtouga'))===3);
+test('Tirtouga resiste ¼ a Fogo',()=>effectiveness('fire',get('Tirtouga').types)===.25);
+test('Gligar e Tirtouga neutros a Pedra',()=>['Gligar','Tirtouga'].every(n=>effectiveness('rock',get(n).types)===1));
+test('Torracat é Fogo e não é imune a Psíquico',()=>get('Torracat').types.join()==='fire'&&effectiveness('psychic',get('Torracat').types)===1);
+test('Lapras Shell Armor, sem imunidade a Água',()=>get('Lapras').ability==='Shell Armor'&&effectiveness('water',get('Lapras').types)===.5);
+test('Magical Leaf: Água, Terra e Pedra',()=>['water','ground','rock'].every(t=>offensiveOptions(t,team).some(m=>m.pokemon==='Ralts'&&m.move==='Magical Leaf')));
+test('Ice Shard: Dragão, Planta, Terra e Voador',()=>['dragon','grass','ground','flying'].every(t=>offensiveOptions(t,team).some(m=>m.move==='Ice Shard')));
+test('Nenhum movimento de Terra, Aço, Fantasma ou Fada inventado',()=>team.every(p=>p.moves.every(m=>!['ground','steel','ghost','fairy'].includes(m[1]))));
+test('Suporte não aparece como dano',()=>Object.keys(TYPES).every(t=>offensiveOptions(t,team).every(m=>!['Parting Shot','Swords Dance','Heal Pulse','Protect','Confuse Ray'].includes(m.move))));
+test('24 movimentos confirmados',()=>team.reduce((s,p)=>s+p.moves.length,0)===24);
+document.querySelector('#result').textContent=results.join('\n')+'\n\n'+passed+' testes passaram.';}).catch(e=>{document.querySelector('#result').textContent='FALHA: '+e.message;throw e});
+</script></html>
