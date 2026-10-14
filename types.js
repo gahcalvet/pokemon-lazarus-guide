@@ -22,5 +22,7 @@ const CHART = {
 };
 function effectiveness(attack,defenders){return defenders.reduce((n,t)=>n*(CHART[attack]?.[t]??1),1)}
 function damageTaken(attack,pokemon){const n=effectiveness(attack,pokemon.types);return n>1&&pokemon.ability==='Solid Rock'?n*.75:n}
-function offensiveOptions(type,team){return team.flatMap(p=>p.moves.filter(m=>m[1]&&effectiveness(m[1],[type])>1).map(m=>({pokemon:p.name,move:m[0],type:m[1]})))}
-if(typeof module!=='undefined')module.exports={TYPES,CHART,effectiveness,damageTaken,offensiveOptions};
+function offensiveOptionsAgainst(defenders,team){return team.flatMap(p=>p.moves.filter(m=>m[1]&&effectiveness(m[1],defenders)>1).map(m=>({pokemon:p.name,move:m[0],type:m[1],multiplier:effectiveness(m[1],defenders)})))}
+function offensiveOptions(type,team){return offensiveOptionsAgainst([type],team)}
+function toggleTypeSelection(current,type){if(type==='all')return [];if(current.includes(type))return current.filter(t=>t!==type);return current.length<2?[...current,type]:current}
+if(typeof module!=='undefined')module.exports={TYPES,CHART,effectiveness,damageTaken,offensiveOptions,offensiveOptionsAgainst,toggleTypeSelection};

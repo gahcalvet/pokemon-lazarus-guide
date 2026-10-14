@@ -1,4 +1,4 @@
-<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes · Lazarus</title><style>body{background:#111418;color:#d4ece0;font:15px monospace;padding:30px}pre{white-space:pre-wrap}</style><h1>Verificação de matchups</h1><pre id="result">Executando…</pre><script src="types.js"></script><script>
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes · Lazarus</title><style>body{background:#111418;color:#d4ece0;font:15px monospace;padding:30px}pre{white-space:pre-wrap}</style><h1>Verificação de matchups</h1><pre id="result">Executando…</pre><script src="types.js?v=3"></script><script>
 fetch('team.json').then(r=>r.json()).then(({team})=>{let passed=0;const results=[];const test=(name,fn)=>{if(!fn())throw Error(name);passed++;results.push('✓ '+name)};const get=n=>team.find(p=>p.name===n);
 test('18 tipos, cada um com ícone',()=>Object.keys(TYPES).length===18);
 test('Gligar imune a Terra e Elétrico',()=>['ground','electric'].every(t=>effectiveness(t,get('Gligar').types)===0));
@@ -16,5 +16,11 @@ test('Ice Shard: Dragão, Planta, Terra e Voador',()=>['dragon','grass','ground'
 test('Nenhum movimento de Terra, Aço, Fantasma ou Fada inventado',()=>team.every(p=>p.moves.every(m=>!['ground','steel','ghost','fairy'].includes(m[1]))));
 test('Suporte não aparece como dano',()=>Object.keys(TYPES).every(t=>offensiveOptions(t,team).every(m=>!['Parting Shot','Swords Dance','Heal Pulse','Protect','Confuse Ray'].includes(m.move))));
 test('24 movimentos confirmados',()=>team.reduce((s,p)=>s+p.moves.length,0)===24);
+test('Água/Voador: Planta é neutro, Elétrico 4×',()=>effectiveness('grass',['water','flying'])===1&&effectiveness('electric',['water','flying'])===4);
+test('Água/Voador: Magical Leaf não entra como super efetivo',()=>!offensiveOptionsAgainst(['water','flying'],team).some(m=>m.move==='Magical Leaf'));
+test('Inseto/Aço: Fire Fang 4×; Ancient Power neutro',()=>offensiveOptionsAgainst(['bug','steel'],team).some(m=>m.move==='Fire Fang'&&m.multiplier===4)&&!offensiveOptionsAgainst(['bug','steel'],team).some(m=>m.move==='Ancient Power'));
+test('Terra/Voador: imunidade Elétrica prevalece; Gelo 4×',()=>effectiveness('electric',['ground','flying'])===0&&effectiveness('ice',['ground','flying'])===4);
+test('Ordem dos tipos não muda a ofensiva',()=>JSON.stringify(offensiveOptionsAgainst(['bug','steel'],team))===JSON.stringify(offensiveOptionsAgainst(['steel','bug'],team)));
+test('Seleção: dois tipos distintos, desmarcar e limpar',()=>toggleTypeSelection(['water'],'flying').join()==='water,flying'&&toggleTypeSelection(['water','flying'],'water').join()==='flying'&&toggleTypeSelection(['water','flying'],'all').length===0&&toggleTypeSelection(['water','flying'],'fire').length===2);
 document.querySelector('#result').textContent=results.join('\n')+'\n\n'+passed+' testes passaram.';}).catch(e=>{document.querySelector('#result').textContent='FALHA: '+e.message;throw e});
 </script></html>

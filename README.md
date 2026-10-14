@@ -29,3 +29,9 @@ Referências: Linear (https://linear.app/) para hierarquia e superfícies escura
 Indicadores: 0× verde / imune; ¼× violeta / resiste muito; ½× azul / resiste. Todos mantêm o multiplicador textual. Os cuidados em `care.json` têm título e explicação, sem mudar a equipe.
 
 As ilustrações da equipe são carregadas como arquivos estáticos do repositório público PokeAPI/sprites; os ícones de tipos permanecem incorporados localmente. Nenhuma API paga é usada.
+
+## Dupla tipagem · terceira edição
+
+Selecione até dois tipos e desmarque clicando novamente; “Todos os tipos” limpa a seleção. Com dois tipos, as respostas ofensivas usam o produto dos dois multiplicadores. A defesa permanece separada por tipo de ataque, pois um Pokémon de dois tipos não combina esses tipos em um único golpe. A busca filtra linhas sem alterar a combinação selecionada; escolher um tipo limpa a busca.
+
+O grid de fundo usa uma máscara radial para desaparecer nas bordas; não intercepta cliques. A Pokébola fica alinhada e sem a contagem de parceiros/tipos.
