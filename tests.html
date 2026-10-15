@@ -1,5 +1,5 @@
-<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes · Lazarus</title><style>body{background:#111418;color:#d4ece0;font:15px monospace;padding:30px}pre{white-space:pre-wrap}</style><h1>Verificação de matchups</h1><pre id="result">Executando…</pre><script src="types.js?v=4"></script><script src="ranking.js?v=6"></script><script src="doubles.js?v=7"></script><script src="doubles-tests.js?v=7"></script><script>
-Promise.all([fetch('team.json?v=6').then(r=>r.json()),fetch('battle-data.json?v=7').then(r=>r.json())]).then(([{team},battleData])=>{let passed=0;const results=[];const test=(name,fn)=>{if(!fn())throw Error(name);passed++;results.push('✓ '+name)};const get=n=>team.find(p=>p.name===n);
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes · Lazarus</title><style>body{background:#111418;color:#d4ece0;font:15px monospace;padding:30px}pre{white-space:pre-wrap}</style><h1>Verificação de matchups</h1><pre id="result">Executando…</pre><script src="types.js?v=4"></script><script src="ranking.js?v=6"></script><script src="doubles.js?v=7"></script><script src="doubles-tests.js?v=9"></script><script src="audit-tests.js?v=9"></script><script>
+Promise.all([fetch('team.json?v=9').then(r=>r.json()),fetch('battle-data.json?v=9').then(r=>r.json()),fetch('audit-reference.json?v=9').then(r=>r.json())]).then(([{team},battleData,auditReference])=>{let passed=0;const results=[];const test=(name,fn)=>{if(!fn())throw Error(name);passed++;results.push('✓ '+name)};const get=n=>team.find(p=>p.name===n);
 test('18 tipos, cada um com ícone',()=>Object.keys(TYPES).length===18);
 test('Gligar imune a Terra e Elétrico',()=>['ground','electric'].every(t=>effectiveness(t,get('Gligar').types)===0));
 test('Gligar recebe 4× de Gelo',()=>effectiveness('ice',get('Gligar').types)===4);
@@ -62,8 +62,8 @@ test('Honedge: moveset confirmado sem Tackle e Fury Cutter',()=>get('Honedge').m
 test('Shadow Sneak físico, prioridade +1 e STAB',()=>{const a=rank(['ghost']).free.find(r=>r.pokemon.name==='Honedge').attacks.best;return a.name==='Shadow Sneak'&&a.multiplier===2&&a.stab&&a.priority&&a.facts.priority===1&&a.facts.category==='physical'});
 test('Shadow Sneak responde a Psíquico e Fantasma',()=>['psychic','ghost'].every(t=>offensiveOptions(t,team).some(m=>m.move==='Shadow Sneak'&&m.pokemon==='Honedge')));
 test('Aerial Ace e Acrobatics cobrem Planta, Lutador e Inseto',()=>['grass','fighting','bug'].every(t=>['Aerial Ace','Acrobatics'].every(n=>offensiveOptions(t,team).some(m=>m.move===n))));
-test('Rock Smash cobre Normal, Gelo, Pedra, Sombrio e Aço',()=>['normal','ice','rock','dark','steel'].every(t=>offensiveOptions(t,team).some(m=>m.move==='Rock Smash'&&m.pokemon==='Gligar')));
-test('Gligar preserva Quick Attack e Knock Off, sem Rock Tomb',()=>get('Gligar').moves.map(m=>m[0]).join()==='Quick Attack,Acrobatics,Rock Smash,Knock Off'&&!get('Gligar').moves.some(m=>m[0]==='Rock Tomb'));
+test('Rock Tomb cobre Fogo, Gelo, Voador e Inseto',()=>['fire','ice','flying','bug'].every(t=>offensiveOptions(t,team).some(m=>m.move==='Rock Tomb'&&m.pokemon==='Gligar')));
+test('Gligar preserva quatro movimentos com Rock Tomb, sem golpes recusados ou Rock Smash',()=>get('Gligar').moves.map(m=>m[0]).join()==='Quick Attack,Acrobatics,Rock Tomb,Knock Off'&&!get('Gligar').moves.some(m=>['Rock Smash','Sand Tomb','Slash'].includes(m[0])));
 test('Acrobatics possui STAB mas não inventa item nem poder dobrado',()=>{const r=rank(['grass']).free.find(r=>r.pokemon.name==='Gligar');return r.attacks.best.stab&&r.attacks.best.facts.powerDoublesWithoutItem&&!Object.hasOwn(get('Gligar'),'item')&&quickReason(r,'free').includes('bônus não presumido')&&!Object.hasOwn(r.attacks.best,'effectivePower')});
 test('Crunch físico poder 80 substitui Bite, mantendo Solid Rock',()=>get('Tirtouga').ability==='Solid Rock'&&get('Tirtouga').moves.map(m=>m[0]).join()==='Crunch,Protect,Aqua Jet,Ancient Power'&&battleData.confirmedMoveFacts.Crunch.power===80&&battleData.confirmedMoveFacts.Crunch.category==='physical');
 test('Crunch cobre Psíquico e Fantasma',()=>['psychic','ghost'].every(t=>offensiveOptions(t,team).some(m=>m.move==='Crunch'&&m.pokemon==='Tirtouga')));
@@ -72,9 +72,10 @@ test('Lapras preserva Water Absorb e golpes, sem Rain Dance',()=>get('Lapras').a
 test('Psíquico/Fantasma: Shadow Sneak recebe efetividade 4×',()=>rank(['psychic','ghost']).free.find(r=>r.pokemon.name==='Honedge').attacks.best.multiplier===4);
 test('Normal/Fantasma: imunidade a Shadow Sneak prevalece',()=>effectiveness('ghost',['normal','ghost'])===0&&!offensiveOptionsAgainst(['normal','ghost'],team).some(m=>m.move==='Shadow Sneak'));
 test('Planta/Aço: Aerial Ace e Acrobatics são neutros',()=>['Aerial Ace','Acrobatics'].every(n=>!offensiveOptionsAgainst(['grass','steel'],team).some(m=>m.move===n)));
-test('Sombrio/Voador: Rock Smash é neutro',()=>!offensiveOptionsAgainst(['dark','flying'],team).some(m=>m.move==='Rock Smash'));
+test('Sombrio/Voador: Rock Tomb é 2× pelo Voador',()=>offensiveOptionsAgainst(['dark','flying'],team).some(m=>m.move==='Rock Tomb'&&m.multiplier===2));
 test('Shadow Sneak lidera entrada livre em Fantasma e Psíquico',()=>free(['ghost'])==='Honedge'&&free(['psychic'])==='Honedge');
 
 const doublesResults=runDoublesTests(team,battleData);results.push(...doublesResults);passed+=doublesResults.length;
+const auditResults=runAuditTests(team,battleData,auditReference);results.push(...auditResults);passed+=auditResults.length;
 document.querySelector('#result').textContent=results.join('\n')+'\n\n'+passed+' testes passaram.';}).catch(e=>{document.querySelector('#result').textContent='FALHA: '+e.message;throw e});
 </script></html>

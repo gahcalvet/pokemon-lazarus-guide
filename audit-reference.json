@@ -1,0 +1,678 @@
+{
+  "purpose": "Independent test fixture only; never used to calculate site recommendations. Extracted from the creator spreadsheet and supplied Lazarus move references, not from types.js/team.json calculations.",
+  "checkedUTC": "2026-10-15",
+  "spreadsheet": "https://docs.google.com/spreadsheets/d/1pMw7DLrgIBFWEvCF1pXOEhAl5ksrGZQbS4wasJr7K-Y/edit",
+  "spreadsheetSha256": "04a4cd2b66840ff5a77d008edaf022a4795ba4279306c29b464cfede0a08a08c",
+  "chartSheet": "Type Chart; B1:S1 attacks; column A defenders. Single-type rows extracted and transposed.",
+  "secondaryChart": "https://github.com/PokeAPI/pokeapi/blob/master/data/v2/csv/type_efficacy.csv",
+  "moveSource": "https://romhackguides.com/hacks/lazarus/moves/",
+  "prioritySource": "Player confirmation (+1/+3) and creator spreadsheet Moves!AA3:AA. Numeric priority not inferred for other moves.",
+  "types": [
+    "normal",
+    "fire",
+    "water",
+    "electric",
+    "grass",
+    "ice",
+    "fighting",
+    "poison",
+    "ground",
+    "flying",
+    "psychic",
+    "bug",
+    "rock",
+    "ghost",
+    "dragon",
+    "dark",
+    "steel",
+    "fairy"
+  ],
+  "attackRows": {
+    "normal": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.5,
+      0.0,
+      1.0,
+      1.0,
+      0.5,
+      1.0
+    ],
+    "fire": [
+      1.0,
+      0.5,
+      0.5,
+      1.0,
+      2.0,
+      2.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      0.5,
+      1.0,
+      0.5,
+      1.0,
+      2.0,
+      1.0
+    ],
+    "water": [
+      1.0,
+      2.0,
+      0.5,
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "electric": [
+      1.0,
+      1.0,
+      2.0,
+      0.5,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      2.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "grass": [
+      1.0,
+      0.5,
+      2.0,
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      0.5,
+      2.0,
+      0.5,
+      1.0,
+      0.5,
+      2.0,
+      1.0,
+      0.5,
+      1.0,
+      0.5,
+      1.0
+    ],
+    "ice": [
+      1.0,
+      0.5,
+      0.5,
+      1.0,
+      2.0,
+      0.5,
+      1.0,
+      1.0,
+      2.0,
+      2.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      0.5,
+      1.0
+    ],
+    "fighting": [
+      2.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      0.5,
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      2.0,
+      0.0,
+      1.0,
+      2.0,
+      2.0,
+      0.5
+    ],
+    "poison": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      1.0,
+      0.5,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      0.5,
+      0.5,
+      1.0,
+      1.0,
+      0.0,
+      2.0
+    ],
+    "ground": [
+      1.0,
+      2.0,
+      1.0,
+      2.0,
+      0.5,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      0.0,
+      1.0,
+      0.5,
+      2.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0
+    ],
+    "flying": [
+      1.0,
+      1.0,
+      1.0,
+      0.5,
+      2.0,
+      1.0,
+      2.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      0.5,
+      1.0
+    ],
+    "psychic": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      2.0,
+      1.0,
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0,
+      0.5,
+      1.0
+    ],
+    "bug": [
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      0.5,
+      0.5,
+      1.0,
+      0.5,
+      2.0,
+      1.0,
+      1.0,
+      0.5,
+      1.0,
+      2.0,
+      0.5,
+      0.5
+    ],
+    "rock": [
+      1.0,
+      2.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      0.5,
+      1.0,
+      0.5,
+      2.0,
+      1.0,
+      2.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.5,
+      1.0
+    ],
+    "ghost": [
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      0.5,
+      1.0,
+      1.0
+    ],
+    "dragon": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      0.5,
+      0.0
+    ],
+    "dark": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      0.5,
+      1.0,
+      0.5
+    ],
+    "steel": [
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      1.0,
+      2.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      1.0,
+      1.0,
+      1.0,
+      0.5,
+      2.0
+    ],
+    "fairy": [
+      1.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      2.0,
+      2.0,
+      0.5,
+      1.0
+    ]
+  },
+  "moves": {
+    "Shadow Sneak": {
+      "type": "ghost",
+      "category": "physical",
+      "power": 40,
+      "accuracy": 100,
+      "highPriority": true,
+      "priority": 1
+    },
+    "Aerial Ace": {
+      "type": "flying",
+      "category": "physical",
+      "power": 60,
+      "accuracy": "—",
+      "highPriority": false
+    },
+    "Acrobatics": {
+      "type": "flying",
+      "category": "physical",
+      "power": 55,
+      "accuracy": 100,
+      "highPriority": false
+    },
+    "Rock Smash": {
+      "type": "fighting",
+      "category": "physical",
+      "power": 40,
+      "accuracy": 100,
+      "highPriority": false
+    },
+    "Crunch": {
+      "type": "dark",
+      "category": "physical",
+      "power": 80,
+      "accuracy": 100,
+      "highPriority": false
+    },
+    "Knock Off": {
+      "type": "dark",
+      "category": "physical",
+      "power": 65,
+      "accuracy": 100,
+      "highPriority": false
+    },
+    "Fire Fang": {
+      "type": "fire",
+      "category": "physical",
+      "power": 65,
+      "accuracy": 95,
+      "highPriority": false
+    },
+    "Fake Out": {
+      "type": "normal",
+      "category": "physical",
+      "power": 40,
+      "accuracy": 100,
+      "highPriority": true,
+      "priority": 3
+    },
+    "Pursuit": {
+      "type": "dark",
+      "category": "physical",
+      "power": 40,
+      "accuracy": 100,
+      "highPriority": false
+    },
+    "Quick Attack": {
+      "type": "normal",
+      "category": "physical",
+      "power": 40,
+      "accuracy": 100,
+      "highPriority": true,
+      "priority": 1
+    },
+    "Magical Leaf": {
+      "type": "grass",
+      "category": "special",
+      "power": 60,
+      "accuracy": "—",
+      "highPriority": false
+    },
+    "Confusion": {
+      "type": "psychic",
+      "category": "special",
+      "power": 50,
+      "accuracy": 100,
+      "highPriority": false
+    },
+    "Aqua Jet": {
+      "type": "water",
+      "category": "physical",
+      "power": 40,
+      "accuracy": 100,
+      "highPriority": true,
+      "priority": 1
+    },
+    "Ancient Power": {
+      "type": "rock",
+      "category": "special",
+      "power": 60,
+      "accuracy": 100,
+      "highPriority": false
+    },
+    "Body Slam": {
+      "type": "normal",
+      "category": "physical",
+      "power": 85,
+      "accuracy": 100,
+      "highPriority": false
+    },
+    "Water Pulse": {
+      "type": "water",
+      "category": "special",
+      "power": 60,
+      "accuracy": 100,
+      "highPriority": false
+    },
+    "Ice Shard": {
+      "type": "ice",
+      "category": "physical",
+      "power": 40,
+      "accuracy": 100,
+      "highPriority": true,
+      "priority": 1
+    },
+    "Parting Shot": {
+      "type": "dark",
+      "category": "status",
+      "power": "—",
+      "accuracy": 100,
+      "highPriority": false
+    },
+    "Swords Dance": {
+      "type": "normal",
+      "category": "status",
+      "power": "—",
+      "accuracy": "—",
+      "highPriority": false
+    },
+    "Double Team": {
+      "type": "normal",
+      "category": "status",
+      "power": "—",
+      "accuracy": "—",
+      "highPriority": false
+    },
+    "Heal Pulse": {
+      "type": "psychic",
+      "category": "status",
+      "power": "—",
+      "accuracy": "—",
+      "highPriority": false
+    },
+    "Protect": {
+      "type": "normal",
+      "category": "status",
+      "power": "—",
+      "accuracy": "—",
+      "highPriority": true
+    },
+    "Confuse Ray": {
+      "type": "ghost",
+      "category": "status",
+      "power": "—",
+      "accuracy": 100,
+      "highPriority": false
+    },
+    "Rock Tomb": {
+      "type": "rock",
+      "category": "physical",
+      "power": 60,
+      "accuracy": 95,
+      "highPriority": false
+    }
+  },
+  "roster": {
+    "Torracat": [
+      [
+        "Knock Off",
+        "dark"
+      ],
+      [
+        "Fire Fang",
+        "fire"
+      ],
+      [
+        "Parting Shot",
+        null
+      ],
+      [
+        "Fake Out",
+        "normal"
+      ]
+    ],
+    "Honedge": [
+      [
+        "Shadow Sneak",
+        "ghost"
+      ],
+      [
+        "Swords Dance",
+        null
+      ],
+      [
+        "Aerial Ace",
+        "flying"
+      ],
+      [
+        "Pursuit",
+        "dark"
+      ]
+    ],
+    "Gligar": [
+      [
+        "Quick Attack",
+        "normal"
+      ],
+      [
+        "Acrobatics",
+        "flying"
+      ],
+      [
+        "Rock Tomb",
+        "rock"
+      ],
+      [
+        "Knock Off",
+        "dark"
+      ]
+    ],
+    "Kirlia": [
+      [
+        "Magical Leaf",
+        "grass"
+      ],
+      [
+        "Confusion",
+        "psychic"
+      ],
+      [
+        "Double Team",
+        null
+      ],
+      [
+        "Heal Pulse",
+        null
+      ]
+    ],
+    "Tirtouga": [
+      [
+        "Crunch",
+        "dark"
+      ],
+      [
+        "Protect",
+        null
+      ],
+      [
+        "Aqua Jet",
+        "water"
+      ],
+      [
+        "Ancient Power",
+        "rock"
+      ]
+    ],
+    "Lapras": [
+      [
+        "Body Slam",
+        "normal"
+      ],
+      [
+        "Confuse Ray",
+        null
+      ],
+      [
+        "Water Pulse",
+        "water"
+      ],
+      [
+        "Ice Shard",
+        "ice"
+      ]
+    ]
+  },
+  "rosterSource": "Retificação mais recente do jogador em 15/10/2026: Gligar com Rock Tomb via TM39, sem Rock Smash, Sand Tomb ou Slash. Demais cinco movesets preservados."
+}

@@ -48,7 +48,7 @@ Limite conhecido: poder, precisão e categoria dos golpes não foram confirmados
 
 ## Atualização confirmada · 14/10/2026
 
-Kirlia substitui Ralts, com Synchronize e os quatro movimentos preservados. Bases do Lazarus: 38/35/35/65/55/50. Honedge recebe Shadow Sneak e Aerial Ace; Gligar recebe Acrobatics e Rock Smash; Tirtouga recebe Crunch. Torracat e Lapras permanecem intactos. Nenhum item foi presumido. Fatos parciais de golpes confirmados pelo jogador estão no catálogo; não são usados para inventar comparações de poder com golpes ainda não verificados. Acrobatics não recebe bônus presumido. A inscrição fixa de nível 19 foi retirada: não há confirmação do nível atual de todos os integrantes.
+Kirlia substitui Ralts, com Synchronize e os quatro movimentos preservados. Bases do Lazarus: 38/35/35/65/55/50. Honedge recebe Shadow Sneak e Aerial Ace; Gligar recebe Acrobatics e Rock Tomb (retificação do jogador em 15/10/2026); Tirtouga recebe Crunch. Torracat e Lapras permanecem intactos. Nenhum item foi presumido. Fatos parciais de golpes confirmados pelo jogador estão no catálogo; não são usados para inventar comparações de poder com golpes ainda não verificados. Acrobatics não recebe bônus presumido. A inscrição fixa de nível 19 foi retirada: não há confirmação do nível atual de todos os integrantes.
 
 
 ## Modo duplas (15/10/2026)
@@ -62,3 +62,8 @@ Os 23 movimentos atuais têm poder, categoria e precisão confirmados pelo jogad
 Parting Shot permanece com alcance desconhecido: o texto de ROM Hack Guides cita os alvos afetados sem fornecer o targeting em duplas. Nenhum benefício de atingir ambos é atribuído. A equipe não possui ataque de área confirmado. Há suporte e testes de infraestrutura para alvos `selected-opponent`, `both-opponents`, `all-others`, `ally`, `self` e `unknown`; dano aliado não é ignorado. Fixtures não acrescentam movimentos à equipe.
 
 Validação: abrir `tests.html` no site. Os testes originais são preservados e `doubles-tests.js` acrescenta pares, matriz 2×2, dados de movimentos, ações, suporte, área, slots, trocas, imutabilidade e as 324 combinações A/B. Layout e interação também devem ser conferidos no Chrome em desktop e largura de 390px antes da publicação.
+
+
+## Retificação e auditoria · 15/10/2026
+
+A confirmação mais recente do jogador corrige o registro do Gligar: Quick Attack, Acrobatics, **Rock Tomb**, Knock Off. Rock Smash estava registrado por informação anterior incorreta e foi substituído exclusivamente por Rock Tomb, Pedra, físico, poder 60 e precisão 95, sem STAB. Sand Tomb e Slash foram recusados. A matriz e os algoritmos são preservados; a cobertura é recalculada pela equipe compartilhada. O cuidado sobre Sombrio foi corrigido para remover a referência ao golpe Lutador ausente. Consulte [o relatório da auditoria](AUDITORIA.md) e execute [os testes](tests.html).
