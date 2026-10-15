@@ -1,5 +1,5 @@
-<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes · Lazarus</title><style>body{background:#111418;color:#d4ece0;font:15px monospace;padding:30px}pre{white-space:pre-wrap}</style><h1>Verificação de matchups</h1><pre id="result">Executando…</pre><script src="types.js?v=4"></script><script src="ranking.js?v=6"></script><script>
-Promise.all([fetch('team.json?v=6').then(r=>r.json()),fetch('battle-data.json?v=6').then(r=>r.json())]).then(([{team},battleData])=>{let passed=0;const results=[];const test=(name,fn)=>{if(!fn())throw Error(name);passed++;results.push('✓ '+name)};const get=n=>team.find(p=>p.name===n);
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes · Lazarus</title><style>body{background:#111418;color:#d4ece0;font:15px monospace;padding:30px}pre{white-space:pre-wrap}</style><h1>Verificação de matchups</h1><pre id="result">Executando…</pre><script src="types.js?v=4"></script><script src="ranking.js?v=6"></script><script src="doubles.js?v=7"></script><script src="doubles-tests.js?v=7"></script><script>
+Promise.all([fetch('team.json?v=6').then(r=>r.json()),fetch('battle-data.json?v=7').then(r=>r.json())]).then(([{team},battleData])=>{let passed=0;const results=[];const test=(name,fn)=>{if(!fn())throw Error(name);passed++;results.push('✓ '+name)};const get=n=>team.find(p=>p.name===n);
 test('18 tipos, cada um com ícone',()=>Object.keys(TYPES).length===18);
 test('Gligar imune a Terra e Elétrico',()=>['ground','electric'].every(t=>effectiveness(t,get('Gligar').types)===0));
 test('Gligar recebe 4× de Gelo',()=>effectiveness('ice',get('Gligar').types)===4);
@@ -75,5 +75,6 @@ test('Planta/Aço: Aerial Ace e Acrobatics são neutros',()=>['Aerial Ace','Acro
 test('Sombrio/Voador: Rock Smash é neutro',()=>!offensiveOptionsAgainst(['dark','flying'],team).some(m=>m.move==='Rock Smash'));
 test('Shadow Sneak lidera entrada livre em Fantasma e Psíquico',()=>free(['ghost'])==='Honedge'&&free(['psychic'])==='Honedge');
 
+const doublesResults=runDoublesTests(team,battleData);results.push(...doublesResults);passed+=doublesResults.length;
 document.querySelector('#result').textContent=results.join('\n')+'\n\n'+passed+' testes passaram.';}).catch(e=>{document.querySelector('#result').textContent='FALHA: '+e.message;throw e});
 </script></html>

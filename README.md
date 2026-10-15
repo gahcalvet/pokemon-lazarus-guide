@@ -49,3 +49,16 @@ Limite conhecido: poder, precisão e categoria dos golpes não foram confirmados
 ## Atualização confirmada · 14/10/2026
 
 Kirlia substitui Ralts, com Synchronize e os quatro movimentos preservados. Bases do Lazarus: 38/35/35/65/55/50. Honedge recebe Shadow Sneak e Aerial Ace; Gligar recebe Acrobatics e Rock Smash; Tirtouga recebe Crunch. Torracat e Lapras permanecem intactos. Nenhum item foi presumido. Fatos parciais de golpes confirmados pelo jogador estão no catálogo; não são usados para inventar comparações de poder com golpes ainda não verificados. Acrobatics não recebe bônus presumido. A inscrição fixa de nível 19 foi retirada: não há confirmação do nível atual de todos os integrantes.
+
+
+## Modo duplas (15/10/2026)
+
+A alternância preserva o modo individual e suas seleções. Os dois tipos de duplas representam adversários separados A/B; podem ser iguais. Slots aliados são opcionais, mas não podem repetir integrantes. Sem aliados são avaliados os 15 pares; um aliado fixa cinco parceiros; dois habilitam análise de manutenção e trocas, respeitando as ações consumidas.
+
+`doubles.js` utiliza a equipe compartilhada, `types.js` e `battle-data.json`. Defesa considera quatro cruzamentos e habilidades confirmadas. Ofensiva atribui uma ação por aliado: efetividade, potencial estrutural de poder × STAB × base ofensiva × efetividade, precisão separada, prioridade sustentada e velocidade base. Potencial não é previsão de dano. Equilíbrio usa dominância/Pareto e critérios ordenados, com exposição máxima antes de utilidade nos desempates. Sem notas somadas.
+
+Os 23 movimentos atuais têm poder, categoria e precisão confirmados pelo jogador via Pokédex Lazarus / ROM Hack Guides. Precisão `—` é literal; bypass e ausência de teste de status são distintos de 100%. Ancient Power usa SpA. Heal Pulse só cura outro alvo. Protect é individual. Acrobatics só dobra se `item: null` for explicitamente confirmado; campo ausente significa desconhecido. Knock Off, Pursuit, Fake Out e boosts têm condições não presumidas.
+
+Parting Shot permanece com alcance desconhecido: o texto de ROM Hack Guides cita os alvos afetados sem fornecer o targeting em duplas. Nenhum benefício de atingir ambos é atribuído. A equipe não possui ataque de área confirmado. Há suporte e testes de infraestrutura para alvos `selected-opponent`, `both-opponents`, `all-others`, `ally`, `self` e `unknown`; dano aliado não é ignorado. Fixtures não acrescentam movimentos à equipe.
+
+Validação: abrir `tests.html` no site. Os testes originais são preservados e `doubles-tests.js` acrescenta pares, matriz 2×2, dados de movimentos, ações, suporte, área, slots, trocas, imutabilidade e as 324 combinações A/B. Layout e interação também devem ser conferidos no Chrome em desktop e largura de 390px antes da publicação.
