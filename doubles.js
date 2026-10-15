@@ -117,7 +117,34 @@ function doubleRankRows(rows){
  });
  return rankings;
 }
-function doublePosition(rows,current,opponents){
+function doublePositionSupport(p,entering,opponents,data){
+ const options=[];
+ if(p.ability==='Intimidate')options.push(entering
+  ?'Intimidate pode reduzir o Ataque físico dos dois adversários ao entrar, se forem afetados; não altera golpes especiais.'
+  :'Intimidate não é reativado por permanecer em campo; qualquer redução anterior não foi presumida.');
+ p.moves.forEach(([name])=>{
+  const facts=doubleFacts(name,data);
+  if(facts.role==='fake-out')options.push('Fake Out tem prioridade +3, mas só funciona no primeiro turno após entrar; não sabemos se essa janela está disponível.');
+  if(facts.role==='protect')options.push('Protect pode proteger o usuário enquanto o parceiro age; não protege o parceiro e usos consecutivos não são garantidos.');
+  if(name==='Swords Dance')options.push('Swords Dance consome uma ação e pode aumentar o Ataque em dois estágios se o usuário conseguir agir; nenhum boost foi presumido.');
+  if(name==='Calm Mind')options.push('Calm Mind consome uma ação e pode elevar Ataque Especial e Defesa Especial em um estágio; nenhum boost foi presumido.');
+  if(facts.role==='pivot')options.push('Parting Shot pode reduzir Ataque e Ataque Especial e reposicionar se funcionar; alcance em duplas não confirmado, então não foi tratado como troca segura nem como efeito nos dois alvos.');
+ });
+ return options;
+}
+function doublePositionAssessment(candidate,opponents,currentNames,data){
+ const threats=candidate.row.matrix.flatMap(row=>row.flatMap(cell=>cell.threats)),counts={
+  immunity:threats.filter(t=>t.multiplier===0).length,
+  resistance:threats.filter(t=>t.multiplier>0&&t.multiplier<1).length,
+  neutral:threats.filter(t=>t.multiplier===1).length,
+  weakness:threats.filter(t=>t.multiplier>1).length
+ };
+ const actions=candidate.row.offense.actions.map(a=>a.name?`${a.owner}: ${a.name} contra ${a.targets.map(i=>String.fromCharCode(65+i)).join('/')} (${a.targets.map(i=>quickFactor(a.coverage[i])).join('/')})${a.stab?' com STAB':''}${a.priority&&!a.conditional?' prioridade +'+(a.facts.priority||1):''}`:`${a.owner}: sem ataque sustentado confirmado`);
+ const support=candidate.slots.flatMap((p,i)=>doublePositionSupport(p,candidate.changed[i],opponents,data).map(text=>`${p.name}: ${text}`));
+ const outgoing=candidate.changed.map((changed,i)=>changed?currentNames[i]:null).filter(Boolean);
+ return {counts,actions,support,outgoing,cost:candidate.count};
+}
+function doublePosition(rows,current,opponents,data){
  if(current.length!==2)return null;
  const currentNames=current.map(p=>p.name),existing=rows.find(r=>currentNames.every(n=>r.pair.some(p=>p.name===n)));
  if(!existing)return null;
@@ -134,7 +161,8 @@ function doublePosition(rows,current,opponents){
   }
  }
  const keep=patterns.keep[0];
- if(sufficient(existing))return {...keep,patterns,adequate:true,reason:'A dupla atual não recebe dano super efetivo dos tipos informados e pode responder aos dois adversários com golpes ao menos neutros. Manter preserva as duas ações; HP e cobertura ainda podem mudar a decisão.'};
+ const assess=candidate=>({...candidate,assessment:doublePositionAssessment(candidate,opponents,currentNames,data)});
+ if(sufficient(existing))return {...assess(keep),patterns,adequate:true,classification:'clear',reason:'A dupla atual não recebe dano super efetivo dos tipos informados e consegue responder aos dois adversários com golpes ao menos neutros. Permanecer preserva as duas ações; HP, movimentos e velocidade adversários ainda podem mudar a decisão.'};
  // Demand a meaningful reduction of the largest exposure, shared weaknesses,
  // or unanswerable targets; never switch merely to win a base-stat tie.
  const risk=r=>[r.values[0],r.shared.filter(Boolean).length,r.values.filter(n=>n>1).length,r.offense.coverage.filter(n=>n===0).length];
@@ -142,13 +170,17 @@ function doublePosition(rows,current,opponents){
  const singles=[...patterns.swapFirst,...patterns.swapSecond].filter(x=>improves(x.row));
  singles.sort((a,b)=>doubleCompare(risk(a.row),risk(b.row))||doubleCompare(a.row.balancedKey,b.row.balancedKey));
  const adequateSingle=singles.find(x=>sufficient(x.row));
- if(adequateSingle)return {...adequateSingle,patterns,adequate:false,reason:'Uma troca reduz a exposição relevante e mantém a ação do parceiro. A entrada ainda pode receber ataques dos dois adversários.'};
+ if(adequateSingle)return {...assess(adequateSingle),patterns,adequate:false,classification:'clear',reason:'Uma troca remove as fraquezas de tipo relevantes e mantém uma resposta ao tipo de cada adversário. O parceiro conserva sua ação; o entrante gasta o turno trocando e ainda pode receber ataques.'};
  const doubles=patterns.swapBoth.filter(x=>improves(x.row));
  doubles.sort((a,b)=>doubleCompare(risk(a.row),risk(b.row))||doubleCompare(a.row.balancedKey,b.row.balancedKey));
- if(doubles[0]&&(!singles[0]||doubleCompare(risk(doubles[0].row),risk(singles[0].row))<0)&&sufficient(doubles[0].row))return {...doubles[0],patterns,adequate:false,reason:'Duas trocas resolvem uma exposição que uma só não resolveu. Custam as duas ações do turno e os dois entrantes podem ser atacados; não são trocas gratuitas.'};
- if(singles[0])return {...singles[0],patterns,adequate:false,reason:'Uma troca reduz a maior exposição conhecida e preserva a ação do parceiro, mas ainda restam riscos. Confira os quatro cruzamentos de tipos.'};
- if(doubles[0])return {...doubles[0],patterns,adequate:false,reason:'Só uma troca dupla melhora os riscos estruturais identificados. Consome ambas as ações e não garante sobreviver às entradas.'};
- return {...keep,patterns,adequate:false,reason:'Nenhuma troca disponível demonstrou redução relevante da exposição conhecida. Manter evita gastar ações apenas por um desempate; a posição ainda exige cuidado.'};
+ if(doubles[0]&&!adequateSingle&&sufficient(doubles[0].row))return {...assess(doubles[0]),patterns,adequate:false,classification:'clear',reason:'Nenhuma troca única deixa os dois slots sem fraqueza relevante e com resposta ofensiva aos dois tipos. A troca dupla alcança isso, mas gasta ambas as ações; os dois entrantes ainda podem receber ataques.'};
+ const bestPartial=singles[0]||doubles[0];
+ if(bestPartial){
+  const candidate=assess(bestPartial),count=candidate.assessment.counts;
+  const bestRisk=candidate.row.values.filter(n=>n>1).length,currentRisk=existing.values.filter(n=>n>1).length;
+  return {...candidate,slots:keep.slots,changed:[false,false],count:0,pattern:'situational',patterns,adequate:false,classification:'situational',partialAlternative:candidate,reason:`Há uma alternativa que reduz algumas das ${currentRisk} fraquezas de tipo possíveis para ${bestRisk}, mas ainda deixa uma escolha entre exposição defensiva, pressão ofensiva e ações consumidas pela troca. Sem HP, golpes, alvos e velocidade adversários, a decisão é situacional.`};
+ }
+ return {...assess(keep),patterns,adequate:false,classification:'situational',pattern:'situational',reason:'Os tipos não mostram uma troca com ganho defensivo claro que compense as ações perdidas. Suportes como Fake Out dependem do turno de entrada; Parting Shot tem alcance em duplas não confirmado. Sem HP, golpes, alvos e velocidade adversários, a decisão é situacional.'};
 }
 function doubleAnalyze(opponents,team,data,allySlots=['','']){
  const invalid={valid:false,all:[],rankings:{defensive:[],offensive:[],balanced:[]},position:null,warnings:[]};
@@ -170,7 +202,7 @@ function doubleAnalyze(opponents,team,data,allySlots=['','']){
  if(!damageMoves.every(m=>Number.isFinite(m.facts.power)&&(Number.isFinite(m.facts.accuracy)||m.facts.accuracyMode==='bypass')&&['physical','special'].includes(m.facts.category)))warnings.push('Poder, precisão e categoria ainda têm verificação parcial no Lazarus. Não foram usados para comparar dano, Ataque/SpA ou garantir eliminações.');
  if(team.some(p=>p.moves.some(m=>doubleFacts(m[0],data).target==='unknown')))warnings.push('Parting Shot: a documentação menciona os alvos afetados, mas não confirma o alcance em duplas. Nenhum bônus de área foi aplicado.');
  if(!team.every(p=>quickStats(p,data)))warnings.push('Há atributos base não verificados; eles não foram usados nos desempates afetados.');
- const position=allies.length===2?doublePosition(all,allySlots.map(n=>team.find(p=>p.name===n)),opponents):null;
+ const position=allies.length===2?doublePosition(all,allySlots.map(n=>team.find(p=>p.name===n)),opponents,analysisData):null;
  return {valid:true,opponents:typeSets.map(types=>types.slice()),all,rankings,recommendations:eligibleRanks,eligibleCount:eligible.length,pinned:allies.length===1?allies[0]:null,position,warnings};
 }
 function doubleDefenseText(r,opponents){return r.pair.map((p,i)=>`${p.name}: ${r.matrix[i].map((x,j)=>x.threats.map(t=>`${String.fromCharCode(65+j)} ${TYPES[t.type]} ${quickFactor(t.multiplier)}${t.abilityImmunity?' por Water Absorb':t.multiplier===0?' por tipagem':t.solidRock?' com Solid Rock':''}`).join(' · ')).join(' · ')}`).join('; ')+'.'}
@@ -181,4 +213,4 @@ function doublePairReason(r,opponents,kind){
  const complement=sets.flatMap((types,i)=>types.flatMap(t=>r.matrix[0][i].threats.find(x=>x.type===t).multiplier>1&&r.matrix[1][i].threats.find(x=>x.type===t).multiplier<1?[`${r.pair[1].name} resiste a ${TYPES[t]}, que ameaça ${r.pair[0].name}; isso não redireciona ataques.`]:r.matrix[1][i].threats.find(x=>x.type===t).multiplier>1&&r.matrix[0][i].threats.find(x=>x.type===t).multiplier<1?[`${r.pair[0].name} resiste a ${TYPES[t]}, que ameaça ${r.pair[1].name}; isso não redireciona ataques.`]:[]));
  return (kind==='offensive'?[doubleOffenseText(r),doubleDefenseText(r,opponents)]:[doubleDefenseText(r,opponents),doubleOffenseText(r)]).concat(shared,kind==='balanced'?complement:[]).join(' ');
 }
-if(typeof module!=='undefined')module.exports={doublePairs,doubleMove,doubleAllyImpact,doubleActions,doubleOffense,doubleEvaluate,doubleRankRows,doublePosition,doubleAnalyze,doublePairReason};
+if(typeof module!=='undefined')module.exports={doublePairs,doubleMove,doubleAllyImpact,doubleActions,doubleOffense,doubleEvaluate,doubleRankRows,doublePosition,doublePositionAssessment,doublePositionSupport,doubleAnalyze,doublePairReason};
