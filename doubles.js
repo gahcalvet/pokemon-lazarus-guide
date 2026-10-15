@@ -182,6 +182,41 @@ function doublePosition(rows,current,opponents,data){
  }
  return {...assess(keep),patterns,adequate:false,classification:'situational',pattern:'situational',reason:'Os tipos não mostram uma troca com ganho defensivo claro que compense as ações perdidas. Suportes como Fake Out dependem do turno de entrada; Parting Shot tem alcance em duplas não confirmado. Sem HP, golpes, alvos e velocidade adversários, a decisão é situacional.'};
 }
+function doubleTurnPlan(position,opponents,data){
+ if(!position)return null;
+ const labels=['A','B'],base=position.pattern==='situational'?position.patterns.keep[0]:position;
+ const selected=base||position,actions=[],swaps=[];
+ selected.slots.forEach((p,i)=>{
+  if(selected.changed[i])swaps.push({owner:selected.changed[i]?position.patterns.keep[0].slots[i].name:p.name,incoming:p.name,slot:i});
+ });
+ if(selected.count===2){
+  return {pattern:position.pattern,actions:[],swaps,future:selected.row.offense.actions,notes:[],fakeOut:null};
+ }
+ const availableOwners=selected.slots.filter((_,i)=>!selected.changed[i]).map(p=>p.name);
+ selected.row.offense.actions.filter(a=>availableOwners.includes(a.owner)).forEach(a=>actions.push(a));
+ const fakeOwner=selected.slots.findIndex((p,i)=>!selected.changed[i]&&p.name==='Torracat');
+ let fakeOut=null;
+ if(fakeOwner>=0){
+  const p=selected.slots[fakeOwner],move=p.moves.find(m=>m[0]==='Fake Out');
+  if(move){
+   const attack=doubleMove(p,move,opponents,data),legal=attack.effectiveness.map((n,i)=>n>0?i:-1).filter(i=>i>=0);
+   const partner=selected.slots[1-fakeOwner],partnerActions=selected.changed[1-fakeOwner]?[]:selected.row.offense.actions.filter(a=>a.owner===partner.name);
+   const partnerAction=partnerActions[0]||null;
+   const candidates=legal.map(target=>({target,partnerAction}));
+   fakeOut={owner:p.name,legalTargets:legal,candidates,partnerAction,unavailableActions:actions.slice(),conditional:true,uncertainTarget:legal.length>1,immuneTargets:attack.effectiveness.map((n,i)=>n===0?i:-1).filter(i=>i>=0)};
+  }
+ }
+ const notes=[];
+ selected.slots.forEach((p,i)=>{
+  if(selected.changed[i])return;
+  const facts=p.moves.map(([name])=>({name,...doubleFacts(name,data)}));
+  if(facts.some(f=>f.role==='pivot'))notes.push(`${p.name}: Parting Shot é uma alternativa condicional de reposicionamento; alcance em duplas e segurança não confirmados.`);
+  if(facts.some(f=>f.role==='protect'))notes.push(`${p.name}: Protect pode proteger apenas o usuário; sucesso em usos consecutivos não é garantido.`);
+  const setup=facts.find(f=>f.name==='Swords Dance'||f.name==='Calm Mind');
+  if(setup)notes.push(`${p.name}: ${setup.name} é uma opção de setup que consome a ação; nenhum boost foi presumido.`);
+ });
+ return {pattern:position.pattern,actions,swaps,future:null,notes,fakeOut};
+}
 function doubleAnalyze(opponents,team,data,allySlots=['','']){
  const invalid={valid:false,all:[],rankings:{defensive:[],offensive:[],balanced:[]},position:null,warnings:[]};
  const typeSets=Array.isArray(opponents)?doubleTypeSets(opponents):[];
@@ -203,7 +238,8 @@ function doubleAnalyze(opponents,team,data,allySlots=['','']){
  if(team.some(p=>p.moves.some(m=>doubleFacts(m[0],data).target==='unknown')))warnings.push('Parting Shot: a documentação menciona os alvos afetados, mas não confirma o alcance em duplas. Nenhum bônus de área foi aplicado.');
  if(!team.every(p=>quickStats(p,data)))warnings.push('Há atributos base não verificados; eles não foram usados nos desempates afetados.');
  const position=allies.length===2?doublePosition(all,allySlots.map(n=>team.find(p=>p.name===n)),opponents,analysisData):null;
- return {valid:true,opponents:typeSets.map(types=>types.slice()),all,rankings,recommendations:eligibleRanks,eligibleCount:eligible.length,pinned:allies.length===1?allies[0]:null,position,warnings};
+ const turnPlan=position?doubleTurnPlan(position,opponents,analysisData):null;
+ return {valid:true,opponents:typeSets.map(types=>types.slice()),all,rankings,recommendations:eligibleRanks,eligibleCount:eligible.length,pinned:allies.length===1?allies[0]:null,position,turnPlan,warnings};
 }
 function doubleDefenseText(r,opponents){return r.pair.map((p,i)=>`${p.name}: ${r.matrix[i].map((x,j)=>x.threats.map(t=>`${String.fromCharCode(65+j)} ${TYPES[t.type]} ${quickFactor(t.multiplier)}${t.abilityImmunity?' por Water Absorb':t.multiplier===0?' por tipagem':t.solidRock?' com Solid Rock':''}`).join(' · ')).join(' · ')}`).join('; ')+'.'}
 function doubleOffenseText(r){return r.offense.actions.map(a=>a.name?`${a.owner} → ${a.targets.map(i=>String.fromCharCode(65+i)).join(' e ')}: ${a.name} ${a.targets.map(i=>quickFactor(a.coverage[i])).join('/')} ${a.stab?'com STAB ':''}· poder base ${a.facts.power} · ${a.facts.category==='special'?'especial':'físico'} · precisão ${a.facts.accuracy}${a.precision==='bypass'?' (não testa precisão)':''}${a.priority&&!a.conditional?' · prioridade +'+(a.facts.priority||1):''} ${a.conditional?'· condicional ':''}`:`${a.owner}: sem ataque sustentado confirmado`).join('; ')+'.'}
@@ -213,4 +249,4 @@ function doublePairReason(r,opponents,kind){
  const complement=sets.flatMap((types,i)=>types.flatMap(t=>r.matrix[0][i].threats.find(x=>x.type===t).multiplier>1&&r.matrix[1][i].threats.find(x=>x.type===t).multiplier<1?[`${r.pair[1].name} resiste a ${TYPES[t]}, que ameaça ${r.pair[0].name}; isso não redireciona ataques.`]:r.matrix[1][i].threats.find(x=>x.type===t).multiplier>1&&r.matrix[0][i].threats.find(x=>x.type===t).multiplier<1?[`${r.pair[0].name} resiste a ${TYPES[t]}, que ameaça ${r.pair[1].name}; isso não redireciona ataques.`]:[]));
  return (kind==='offensive'?[doubleOffenseText(r),doubleDefenseText(r,opponents)]:[doubleDefenseText(r,opponents),doubleOffenseText(r)]).concat(shared,kind==='balanced'?complement:[]).join(' ');
 }
-if(typeof module!=='undefined')module.exports={doublePairs,doubleMove,doubleAllyImpact,doubleActions,doubleOffense,doubleEvaluate,doubleRankRows,doublePosition,doublePositionAssessment,doublePositionSupport,doubleAnalyze,doublePairReason};
+if(typeof module!=='undefined')module.exports={doublePairs,doubleMove,doubleAllyImpact,doubleActions,doubleOffense,doubleEvaluate,doubleRankRows,doublePosition,doublePositionAssessment,doublePositionSupport,doubleTurnPlan,doubleAnalyze,doublePairReason};

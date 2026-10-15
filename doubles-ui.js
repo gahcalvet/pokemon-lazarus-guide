@@ -13,12 +13,50 @@ function doublePositionOptionHTML(option,label,opponents,original,data){
  const support=info.support.length?`Suporte ou habilidade condicional: ${info.support.join(' ')}`:'Suporte ou habilidade: nenhum benefício adicional confirmado para esta decisão.';
  return `<p><strong>${label}:</strong> ${escapeQuick(option.slots.map(p=>p.name).join(' + '))}. ${escapeQuick(defense)} ${escapeQuick(`Plano ofensivo: ${offense||'sem plano confirmado'}.`)} ${escapeQuick(cost)} ${escapeQuick(support)}</p>`;
 }
+function doubleActionLine(action){
+ if(!action||!action.name)return `${action?.owner||'Pokémon'}: sem ataque confirmado para este turno.`;
+ const targets=action.targets.map(i=>`Adversário ${String.fromCharCode(65+i)}`).join(' e ');
+ const factors=action.targets.map(i=>quickFactor(action.coverage[i])).join('/');
+ return `${action.owner}: ${action.name} → ${targets} (${factors}${action.stab?' · STAB':''}${action.priority?` · prioridade +${action.facts.priority}`:''}).`;
+}
+function doubleTurnPlanHTML(position,plan){
+ if(!plan)return '';
+ const lines=[];
+ if(plan.swaps.length===2){
+  plan.swaps.forEach(s=>lines.push(`<p><strong>${escapeQuick(s.owner)}:</strong> trocar → ${escapeQuick(s.incoming)} (ação consumida).</p>`));
+  lines.push('<p>As duas ações deste turno são consumidas pelas trocas.</p>');
+ }else{
+  plan.swaps.forEach(s=>lines.push(`<p><strong>${escapeQuick(s.owner)}:</strong> trocar → ${escapeQuick(s.incoming)} (ação consumida).</p>`));
+  plan.actions.forEach(a=>lines.push(`<p>${escapeQuick(doubleActionLine(a))}</p>`));
+ }
+ if(!plan.swaps.length&&!plan.actions.length)lines.push('<p>Não há uma ação ofensiva confirmada para sugerir neste turno.</p>');
+ if(plan.future?.length)lines.push(`<p class="double-plan-future"><strong>Próximo turno, após as entradas:</strong> ${escapeQuick(plan.future.map(doubleActionLine).join(' '))}</p>`);
+ if(position.pattern==='situational'&&position.partialAlternative){
+  const alt=position.partialAlternative,changed=alt.slots.map((p,i)=>alt.changed[i]?`${doublesState.allies[i]} → ${p.name}`:null).filter(Boolean);
+  if(changed.length)lines.push(`<p class="double-plan-note"><strong>Alternativa parcial:</strong> ${escapeQuick(changed.join(' · '))}; ainda há incerteza sobre risco e valor das ações.</p>`);
+ }
+ if(plan.fakeOut){
+  const f=plan.fakeOut;
+  lines.push('<div class="double-fakeout"><strong>Fake Out, se disponível</strong><p class="double-plan-note">Cenário indisponível: use o plano principal acima. A janela depende de Torracat ter acabado de entrar.</p>');
+  if(!f.legalTargets.length)lines.push('<p class="double-plan-note">Cenário disponível: Fake Out não atinge os tipos selecionados (imunidade a Normal); mantenha a ação principal.</p>');
+  else{
+   const targetText=f.uncertainTarget?`alvo situacional: ${f.legalTargets.map(i=>`Adversário ${String.fromCharCode(65+i)}`).join(' ou ')}`:`Adversário ${String.fromCharCode(65+f.legalTargets[0])}`;
+   lines.push(`<p>Torracat: Fake Out → ${escapeQuick(targetText)} (prioridade +3; interrupção não garantida).</p>`);
+   if(f.partnerAction)lines.push(`<p>${escapeQuick(doubleActionLine(f.partnerAction))}</p>`);
+   else lines.push('<p>O parceiro troca neste turno e não realiza ataque.</p>');
+   lines.push('<p class="double-plan-note">O plano com Fake Out é uma alternativa condicional; sem dados dos adversários, não é possível concluir que supera o ataque ou Parting Shot.</p>');
+  }
+  lines.push('</div>');
+ }
+ if(plan.notes.length)lines.push(`<p class="double-plan-note">${escapeQuick(plan.notes.join(' '))}</p>`);
+ return `<section class="double-action-plan"><span class="eyebrow">PLANO DE AÇÃO SUGERIDO</span>${lines.join('')}</section>`;
+}
 function doublePositionHTML(position,opponents,data){
  const labels={keep:'Manter a dupla atual',swapFirst:'Trocar o aliado 1',swapSecond:'Trocar o aliado 2',swapBoth:'Trocar os dois aliados',situational:'Decisão situacional'};
  const original=doublesState.allies;
  const changes=position.pattern==='situational'?'Sem troca com vantagem clara pelos dados disponíveis.':position.slots.map((p,i)=>position.changed[i]?`${original[i]} → ${p.name}`:`${p.name} permanece`).join(' · ');
  const patterns=Object.entries({keep:'Manter os dois',swapSecond:'Trocar apenas o aliado 2',swapFirst:'Trocar apenas o aliado 1',swapBoth:'Trocar os dois'}).map(([key,label])=>{const options=position.patterns[key].slice().sort((a,b)=>doubleCompare(a.row.balancedKey,b.row.balancedKey));const candidate=options[0];return candidate?doublePositionOptionHTML(candidate,label,opponents,original,data):''}).join('');
- return `<article class="doubles-position"><span class="eyebrow">POSIÇÃO ATUAL</span><h3>${labels[position.pattern]}</h3><strong>${escapeQuick(changes)}</strong><p>${escapeQuick(position.reason)}</p><details><summary>Comparar as quatro alternativas</summary>${patterns}<p>${escapeQuick(doubleDefenseText(position.row,opponents))}</p><p>Plano ofensivo ${position.count?'após a entrada':'da dupla'}: ${escapeQuick(doubleOffenseText(position.row))}</p></details></article>`;
+ return `<article class="doubles-position"><span class="eyebrow">POSIÇÃO ATUAL</span><h3>${labels[position.pattern]}</h3><strong>${escapeQuick(changes)}</strong><p>${escapeQuick(position.reason)}</p>${doubleTurnPlanHTML(position,position.turnPlan||doubleTurnPlan(position,opponents,data))}<details><summary>Comparar as quatro alternativas</summary>${patterns}<p>${escapeQuick(doubleDefenseText(position.row,opponents))}</p><p>Plano ofensivo ${position.count?'após a entrada':'da dupla'}: ${escapeQuick(doubleOffenseText(position.row))}</p></details></article>`;
 }
 function renderDoubles(){
  const output=document.querySelector('#doubles-results'),prompt=document.querySelector('#doubles-prompt');
