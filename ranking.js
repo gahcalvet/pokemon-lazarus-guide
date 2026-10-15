@@ -3,11 +3,11 @@
 // Base stats are reference data, not the individual's current stats.
 const QUICK_CONDITIONAL = new Set(['Fake Out','First Impression','Sucker Punch','Thunderclap','Upper Hand','Bide']);
 const QUICK_SETUP = new Set(['Swords Dance']);
-const QUICK_KNOWN_ABILITIES = new Set(['Water Absorb','Solid Rock','Intimidate','No Guard','Hyper Cutter','Shell Armor']);
+const QUICK_KNOWN_ABILITIES = new Set(['Water Absorb','Solid Rock','Intimidate','No Guard','Hyper Cutter','Shell Armor','Synchronize']);
 function quickCompareKeys(a,b){for(let i=0;i<a.length;i++){if(a[i]!==b[i])return a[i]-b[i]}return 0}
 function quickStats(p,data){const s=data.species?.[p.name];return s&&['hp','def','spd','spe'].every(k=>Number.isFinite(s[k]))?s:null}
 function quickAttacks(p,types,data){
- const candidates=p.moves.filter(m=>m[1]).map(([name,type])=>({name,type,multiplier:effectiveness(type,types),stab:p.types.includes(type),priority:(data.highPriority||[]).includes(name),conditional:QUICK_CONDITIONAL.has(name)}));
+ const candidates=p.moves.filter(m=>m[1]).map(([name,type])=>({name,type,multiplier:effectiveness(type,types),stab:p.types.includes(type),priority:(data.highPriority||[]).includes(name),conditional:QUICK_CONDITIONAL.has(name),facts:data.confirmedMoveFacts?.[name]||{}}));
  const sustained=candidates.filter(m=>!m.conditional);
  const pool=sustained.length?sustained:candidates;
  pool.sort((a,b)=>quickCompareKeys([-a.multiplier,-Number(a.stab),-Number(a.priority)],[-b.multiplier,-Number(b.stab),-Number(b.priority)]));
@@ -47,7 +47,7 @@ function quickRanking(types,team,data){
  return {direct:sorted('directKey'),free:sorted('freeKey'),warnings};
 }
 function quickFactor(n){return ({0:'0×',.25:'¼×',.5:'½×',1:'1×',1.5:'1,5×',2:'2×',3:'3×',4:'4×'})[n]??`${n}×`}
-function quickAttackReason(r){const a=r.attacks.best;if(!a)return 'Sem golpe de dano confirmado.';if(a.multiplier===0)return 'Todos os golpes de dano confirmados são anulados por essa tipagem.';return `${a.name}: ${quickFactor(a.multiplier)}${a.stab?' com STAB':''}${a.priority&&!a.conditional?' e prioridade':''}${a.conditional?' (condicional)':''}.`}
+function quickAttackReason(r){const a=r.attacks.best;if(!a)return 'Sem golpe de dano confirmado.';if(a.multiplier===0)return 'Todos os golpes de dano confirmados são anulados por essa tipagem.';return `${a.name}: ${quickFactor(a.multiplier)}${a.stab?' com STAB':''}${a.priority&&!a.conditional?` e prioridade${Number.isFinite(a.facts?.priority)?' +'+a.facts.priority:''}`:''}${a.conditional?' (condicional)':''}.`}
 function quickReason(r,scenario){
  const p=r.pokemon,parts=[];
  if(scenario==='direct'){
@@ -64,6 +64,8 @@ function quickReason(r,scenario){
   if(priority.length)parts.push('Prioridade alternativa: '+priority.map(a=>`${a.name} ${quickFactor(a.multiplier)}`).join(', ')+'.');
   if(p.moves.some(m=>m[0]==='Swords Dance'))parts.push('Swords Dance exige outro turno; nenhum boost foi presumido.');
  }
+ const fact=r.attacks.best?.facts;if(fact?.category==='physical')parts.push(`Golpe físico${Number.isFinite(fact.power)?' · poder base '+fact.power:''}.`);
+ if(p.moves.some(m=>m[0]==='Acrobatics'))parts.push('Acrobatics dobra de poder apenas sem item; bônus não presumido.');
  if(p.moves.some(m=>m[0]==='Parting Shot'))parts.push('Parting Shot permite recuar reduzindo a pressão adversária.');
  if(p.moves.some(m=>m[0]==='Fury Cutter')&&r.attacks.best?.name==='Fury Cutter')parts.push('Sem acúmulo presumido de Fury Cutter.');
  if(p.moves.some(m=>m[0]==='Knock Off')&&r.attacks.best?.name==='Knock Off')parts.push('Sem bônus de item adversário presumido.');

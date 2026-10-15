@@ -12,7 +12,7 @@ Edite `team.json` para registrar apenas alterações confirmadas na equipe. Cada
 
 ## Precisão
 
-- Ralts recebe dano neutro de Sombrio (Psíquico/Fada).
+- Kirlia recebe dano neutro de Sombrio (Psíquico/Fada).
 - Tirtouga e Gligar recebem dano neutro de Pedra; Honedge resiste ao tipo.
 - Tirtouga tem fraqueza 4× a Planta por tipos; Solid Rock resulta em 3× de dano.
 - Nenhum movimento futuro é considerado. Lapras possui Water Absorb confirmado: imunidade a Água por habilidade e recuperação de HP; a tipagem Água/Gelo sozinha resiste ½×.
@@ -44,3 +44,8 @@ O grid de fundo usa uma máscara radial para desaparecer nas bordas; não interc
 Critérios lexicográficos, sem soma ponderada: defesa pelo pior multiplicador, depois pelo segundo, recuperação por Water Absorb, camadas de dominância conjunta de HP/Def/SpD, Intimidate/Parting Shot e resposta ofensiva. Entrada livre por efetividade, STAB, prioridade sustentada, velocidade base, setup e pivot em empate. Golpes condicionais não ganham bônus; os boosts de setup não são aplicados. Empates completos são explícitos.
 
 Limite conhecido: poder, precisão e categoria dos golpes não foram confirmados na fonte específica e ficam fora dos desempates; não inferir Ataque versus Ataque Especial sem categoria. Não prevê dano, ordem individual, EVs, itens, HP atual, cobertura ou habilidade adversária. Bases modificadas verificadas incluem Gligar 75/75/105/35/70/60 e Lapras 130/75/80/95/95/60. Falha na referência do modo rápido preserva o guia original. Novas espécies consultam o catálogo por nome; dados e efeitos novos não verificados são sinalizados, sem valores inventados. Atualizar a referência verificada quando houver nova versão do jogo.
+
+
+## Atualização confirmada · 14/10/2026
+
+Kirlia substitui Ralts, com Synchronize e os quatro movimentos preservados. Bases do Lazarus: 38/35/35/65/55/50. Honedge recebe Shadow Sneak e Aerial Ace; Gligar recebe Acrobatics e Rock Smash; Tirtouga recebe Crunch. Torracat e Lapras permanecem intactos. Nenhum item foi presumido. Fatos parciais de golpes confirmados pelo jogador estão no catálogo; não são usados para inventar comparações de poder com golpes ainda não verificados. Acrobatics não recebe bônus presumido. A inscrição fixa de nível 19 foi retirada: não há confirmação do nível atual de todos os integrantes.

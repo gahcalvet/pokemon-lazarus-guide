@@ -24,11 +24,11 @@
     "body": "Sua dupla tipagem amplia a fraqueza a Gelo. Ao entrar com Honedge, confira possíveis golpes de Fogo ou Sombrio."
   },
   "Lutador": {
-    "title": "Ralts ainda é frágil.",
-    "body": "Ralts recebe só um quarto do dano por tipos, mas isso não compensa automaticamente sua fragilidade. Honedge é imune."
+    "title": "Kirlia ainda exige cuidado.",
+    "body": "Kirlia recebe só um quarto do dano por tipos, mas isso não compensa automaticamente sua fragilidade. Honedge é imune."
   },
   "Veneno": {
-    "title": "Evite expor Ralts.",
+    "title": "Evite expor Kirlia.",
     "body": "Ele é fraco a Veneno. Honedge anula esse tipo de ataque; confira os outros golpes do adversário."
   },
   "Terra": {
@@ -44,7 +44,7 @@
     "body": "Torracat ainda é apenas Fogo: recebe dano neutro de Psíquico, mesmo tendo um golpe Sombrio."
   },
   "Inseto": {
-    "title": "Ralts recebe dano neutro.",
+    "title": "Kirlia recebe dano neutro.",
     "body": "A resistência de Fada compensa a fraqueza de Psíquico. Honedge recebe só um quarto do dano por tipos."
   },
   "Pedra": {
@@ -53,19 +53,19 @@
   },
   "Fantasma": {
     "title": "O time não tem uma resistência.",
-    "body": "Torracat recebe dano neutro. Honedge é fraco a Fantasma, mesmo tendo Pursuit para responder."
+    "body": "Torracat recebe dano neutro. Honedge é fraco a Fantasma, mesmo tendo Shadow Sneak com STAB e prioridade para responder."
   },
   "Dragão": {
     "title": "Lapras não resiste a Dragão.",
-    "body": "Ralts anula Dragão. Lapras tem Ice Shard super efetivo, mas recebe dano neutro desse tipo."
+    "body": "Kirlia anula Dragão. Lapras tem Ice Shard super efetivo, mas recebe dano neutro desse tipo."
   },
   "Sombrio": {
-    "title": "Ralts não é uma resistência.",
-    "body": "Psíquico e Fada se compensam: o dano é neutro. Honedge é vulnerável, embora Fury Cutter seja super efetivo."
+    "title": "Kirlia não é uma resistência.",
+    "body": "Psíquico e Fada se compensam: o dano é neutro. Honedge é vulnerável. Rock Smash de Gligar oferece uma resposta super efetiva."
   },
   "Aço": {
     "title": "Fire Fang ajuda na resposta.",
-    "body": "Torracat resiste a Aço e tem cobertura super efetiva. Ralts é vulnerável a esse tipo."
+    "body": "Torracat resiste a Aço e tem cobertura super efetiva. Kirlia é vulnerável a esse tipo."
   },
   "Fada": {
     "title": "Resistimos, mas falta cobertura.",
