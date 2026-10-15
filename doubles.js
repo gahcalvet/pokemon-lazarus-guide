@@ -1,15 +1,18 @@
 'use strict';
-// Pure doubles analysis. The two input types are TWO opponents, never dual typing.
+// Pure doubles analysis. Each of two opponents may have one or two selected types.
 // Shared source: TYPES/effectiveness/damageTaken + team.json + battle-data.json.
 // Ordered criteria and Pareto fronts; no weighted score, simulated HP or KO claim.
 function doublePairs(team){return team.flatMap((p,i)=>team.slice(i+1).map(q=>[p,q]))}
 function doubleCompare(a,b){return quickCompareKeys(a,b)}
 function doubleFacts(name,data){return {...(data.confirmedMoveFacts?.[name]||{}),...(data.doublesMechanics?.[name]||{})}}
+function doubleTypeSets(opponents){return opponents.map(entry=>{const types=Array.isArray(entry)?entry:entry&&Array.isArray(entry.types)?entry.types:[entry];return types.filter(Boolean)})}
+function doubleOpponentLabel(opponents,i){return doubleTypeSets(opponents)[i].map(t=>TYPES[t]).join('/')}
 function doubleMove(p,move,opponents,data){
  const [name,type]=move,facts=doubleFacts(name,data),target=facts.target||'unknown';
  const stats=quickStats(p,data),offenseBase=stats?.[facts.category==='physical'?'atk':facts.category==='special'?'spa':''];
  const known=Number.isFinite(facts.power)&&Number.isFinite(offenseBase),effectivePower=facts.powerDoublesWithoutItem&&p.item===null?facts.power*2:facts.power;
- return {power:effectivePower,offenseBase,known,precision:facts.accuracyMode==='bypass'?'bypass':facts.accuracy,precisionTier:p.ability==='No Guard'||facts.accuracyMode==='bypass'?0:facts.accuracy===100?1:Number.isFinite(facts.accuracy)?2:3,name,type,facts,target,owner:p.name,stab:!!type&&p.types.includes(type),conditional:!!facts.conditional||QUICK_CONDITIONAL.has(name),priority:!!type&&(Number.isFinite(facts.priority)?facts.priority>0:(data.highPriority||[]).includes(name)),effectiveness:type?opponents.map(t=>effectiveness(type,[t])):[0,0]};
+ const typeSets=doubleTypeSets(opponents);
+ return {power:effectivePower,offenseBase,known,precision:facts.accuracyMode==='bypass'?'bypass':facts.accuracy,precisionTier:p.ability==='No Guard'||facts.accuracyMode==='bypass'?0:facts.accuracy===100?1:Number.isFinite(facts.accuracy)?2:3,name,type,facts,target,owner:p.name,stab:!!type&&p.types.includes(type),conditional:!!facts.conditional||QUICK_CONDITIONAL.has(name),priority:!!type&&(Number.isFinite(facts.priority)?facts.priority>0:(data.highPriority||[]).includes(name)),effectiveness:type?typeSets.map(types=>effectiveness(type,types)):[0,0]};
 }
 function doubleAllyImpact(move,partner){
  if(move.target!=='all-others')return null;
@@ -68,24 +71,26 @@ function doubleSupport(pair,opponents,data){
   p.moves.forEach(m=>{
    const move=doubleMove(p,m,opponents,data),f=move.facts;
    if(f.role==='fake-out'){
-    const targets=opponents.map((t,i)=>effectiveness(m[1],[t])>0?String.fromCharCode(65+i):null).filter(Boolean);
+    const targets=opponents.map((_,i)=>move.effectiveness[i]>0?String.fromCharCode(65+i):null).filter(Boolean);
     notes.push({kind:'fake-out',owner:p.name,targets,text:targets.length?`${p.name}: Fake Out pode interromper o adversário ${targets.join(' ou ')}, apenas no primeiro turno após entrar e se não houver proteção ou imunidade. Disponibilidade neste turno desconhecida.`:`${p.name}: Fake Out é anulado pelos tipos Fantasma selecionados. Não conte com a interrupção.`});
    }
    if(f.role==='protect')notes.push({kind:'protect',owner:p.name,text:`${p.name}: Protect protege o próprio usuário enquanto ${partner.name} pode agir. Não protege diretamente o parceiro; repetições não têm sucesso garantido.`});
    if(f.role==='pivot')notes.push({kind:'pivot',owner:p.name,text:`${p.name}: Parting Shot reduz Ataque/SpA dos alvos afetados e permite recuar, se funcionar. Alcance em duplas não confirmado; sem bônus por afetar ambos. Consome sua ação.`});
    if(f.role==='heal-ally')notes.push({kind:'heal-ally',owner:p.name,text:`${p.name}: Heal Pulse pode recuperar HP de ${partner.name}, consumindo a ação de ${p.name}. Não cura o próprio usuário e não garante sobreviver até agir.`});
    if(m[0]==='Swords Dance')notes.push({kind:'setup',owner:p.name,text:`${p.name}: Swords Dance aumenta o Ataque físico em dois estágios, usa um turno e não impede os dois adversários de focarem nele. Nenhum boost foi aplicado.`});
+   if(m[0]==='Calm Mind')notes.push({kind:'setup',owner:p.name,text:`${p.name}: Calm Mind aumenta Ataque Especial e Defesa Especial em um estágio, usa um turno e não impede os dois adversários de focarem nele. Nenhum boost foi aplicado.`});
    if(f.powerDoublesWithoutItem)notes.push({kind:'item',owner:p.name,text:`${p.name}: Acrobatics tem STAB, mas o bônus sem item não foi presumido. O item equipado precisa estar confirmado.`});
   });
  });
  return notes;
 }
 function doubleEvaluate(pair,opponents,data){
- const matrix=pair.map(p=>opponents.map(type=>({type,byTypes:effectiveness(type,p.types),multiplier:damageTaken(type,p),abilityImmunity:effectiveness(type,p.types)!==0&&damageTaken(type,p)===0,solidRock:effectiveness(type,p.types)>1&&p.ability==='Solid Rock'})));
- const values=matrix.flat().map(x=>x.multiplier).sort((a,b)=>b-a);
- const shared=opponents.map((_,i)=>matrix.every(row=>row[i].multiplier>1));
+ const typeSets=doubleTypeSets(opponents);
+ const matrix=pair.map(p=>typeSets.map((types,index)=>{const threats=types.map(type=>({type,byTypes:effectiveness(type,p.types),multiplier:damageTaken(type,p),abilityImmunity:effectiveness(type,p.types)!==0&&damageTaken(type,p)===0,solidRock:effectiveness(type,p.types)>1&&p.ability==='Solid Rock'}));return {types,threats,type:types[0],byTypes:threats[0]?.byTypes??1,multiplier:Math.max(...threats.map(x=>x.multiplier)),abilityImmunity:threats.some(x=>x.abilityImmunity),solidRock:threats.some(x=>x.solidRock)}}));
+ const values=matrix.flatMap(row=>row.flatMap(cell=>cell.threats.map(x=>x.multiplier))).sort((a,b)=>b-a);
+ const shared=typeSets.map((types,i)=>types.some(type=>pair.every(p=>damageTaken(type,p)>1)));
  const offense=doubleOffense(pair,opponents,data),support=doubleSupport(pair,opponents,data);
- const healing=matrix.filter(row=>row.some(x=>x.abilityImmunity&&x.type==='water')).length;
+ const healing=matrix.filter(row=>row.some(cell=>cell.threats.some(x=>x.abilityImmunity&&x.type==='water'))).length;
  const baseKey=[values[0],shared.filter(Boolean).length,...values.slice(1),-healing];
  const stats=pair.map(p=>quickStats(p,data));
  const bulk=stats.every(Boolean)?['hp','def','spd'].flatMap(k=>stats.map(s=>-s[k]).sort((a,b)=>b-a)):null;
@@ -147,7 +152,8 @@ function doublePosition(rows,current,opponents){
 }
 function doubleAnalyze(opponents,team,data,allySlots=['','']){
  const invalid={valid:false,all:[],rankings:{defensive:[],offensive:[],balanced:[]},position:null,warnings:[]};
- if(!Array.isArray(opponents)||opponents.length!==2||opponents.some(t=>!Object.hasOwn(TYPES,t)))return {...invalid,error:'Selecione o tipo dos dois adversários.'};
+ const typeSets=Array.isArray(opponents)?doubleTypeSets(opponents):[];
+ if(typeSets.length!==2||typeSets.some(types=>!types.length||types.length>2||types.some(t=>!Object.hasOwn(TYPES,t))||new Set(types).size!==types.length))return {...invalid,error:'Selecione o tipo principal de cada adversário. O segundo tipo é opcional e deve ser diferente.'};
  if(!Array.isArray(allySlots)||allySlots.length!==2)return {...invalid,error:'São necessários dois slots aliados opcionais.'};
  const allies=allySlots.filter(Boolean);
  if(new Set(allies).size!==allies.length)return {...invalid,error:'Escolha Pokémon diferentes para os slots aliados.'};
@@ -165,13 +171,14 @@ function doubleAnalyze(opponents,team,data,allySlots=['','']){
  if(team.some(p=>p.moves.some(m=>doubleFacts(m[0],data).target==='unknown')))warnings.push('Parting Shot: a documentação menciona os alvos afetados, mas não confirma o alcance em duplas. Nenhum bônus de área foi aplicado.');
  if(!team.every(p=>quickStats(p,data)))warnings.push('Há atributos base não verificados; eles não foram usados nos desempates afetados.');
  const position=allies.length===2?doublePosition(all,allySlots.map(n=>team.find(p=>p.name===n)),opponents):null;
- return {valid:true,opponents:opponents.slice(),all,rankings,recommendations:eligibleRanks,eligibleCount:eligible.length,pinned:allies.length===1?allies[0]:null,position,warnings};
+ return {valid:true,opponents:typeSets.map(types=>types.slice()),all,rankings,recommendations:eligibleRanks,eligibleCount:eligible.length,pinned:allies.length===1?allies[0]:null,position,warnings};
 }
-function doubleDefenseText(r,opponents){return r.pair.map((p,i)=>`${p.name}: ${r.matrix[i].map((x,j)=>`${String.fromCharCode(65+j)} ${TYPES[opponents[j]]} ${quickFactor(x.multiplier)}${x.abilityImmunity?' por Water Absorb':x.multiplier===0?' por tipagem':x.solidRock?' com Solid Rock':''}`).join(' · ')}`).join('; ')+'.'}
+function doubleDefenseText(r,opponents){return r.pair.map((p,i)=>`${p.name}: ${r.matrix[i].map((x,j)=>x.threats.map(t=>`${String.fromCharCode(65+j)} ${TYPES[t.type]} ${quickFactor(t.multiplier)}${t.abilityImmunity?' por Water Absorb':t.multiplier===0?' por tipagem':t.solidRock?' com Solid Rock':''}`).join(' · ')).join(' · ')}`).join('; ')+'.'}
 function doubleOffenseText(r){return r.offense.actions.map(a=>a.name?`${a.owner} → ${a.targets.map(i=>String.fromCharCode(65+i)).join(' e ')}: ${a.name} ${a.targets.map(i=>quickFactor(a.coverage[i])).join('/')} ${a.stab?'com STAB ':''}· poder base ${a.facts.power} · ${a.facts.category==='special'?'especial':'físico'} · precisão ${a.facts.accuracy}${a.precision==='bypass'?' (não testa precisão)':''}${a.priority&&!a.conditional?' · prioridade +'+(a.facts.priority||1):''} ${a.conditional?'· condicional ':''}`:`${a.owner}: sem ataque sustentado confirmado`).join('; ')+'.'}
 function doublePairReason(r,opponents,kind){
- const shared=r.shared.flatMap((yes,i)=>yes?[`${String.fromCharCode(65+i)} (${TYPES[opponents[i]]}) ameaça os dois aliados super efetivamente.`]:[]);
- const complement=opponents.flatMap((t,i)=>r.matrix[0][i].multiplier>1&&r.matrix[1][i].multiplier<1?[`${r.pair[1].name} resiste a ${TYPES[t]}, que ameaça ${r.pair[0].name}; isso não redireciona ataques.`]:r.matrix[1][i].multiplier>1&&r.matrix[0][i].multiplier<1?[`${r.pair[0].name} resiste a ${TYPES[t]}, que ameaça ${r.pair[1].name}; isso não redireciona ataques.`]:[]);
+ const sets=doubleTypeSets(opponents);
+ const shared=r.shared.flatMap((yes,i)=>yes?[`${String.fromCharCode(65+i)} (${sets[i].map(t=>TYPES[t]).join('/')}) ameaça os dois aliados super efetivamente.`]:[]);
+ const complement=sets.flatMap((types,i)=>types.flatMap(t=>r.matrix[0][i].threats.find(x=>x.type===t).multiplier>1&&r.matrix[1][i].threats.find(x=>x.type===t).multiplier<1?[`${r.pair[1].name} resiste a ${TYPES[t]}, que ameaça ${r.pair[0].name}; isso não redireciona ataques.`]:r.matrix[1][i].threats.find(x=>x.type===t).multiplier>1&&r.matrix[0][i].threats.find(x=>x.type===t).multiplier<1?[`${r.pair[0].name} resiste a ${TYPES[t]}, que ameaça ${r.pair[1].name}; isso não redireciona ataques.`]:[]));
  return (kind==='offensive'?[doubleOffenseText(r),doubleDefenseText(r,opponents)]:[doubleDefenseText(r,opponents),doubleOffenseText(r)]).concat(shared,kind==='balanced'?complement:[]).join(' ');
 }
 if(typeof module!=='undefined')module.exports={doublePairs,doubleMove,doubleAllyImpact,doubleActions,doubleOffense,doubleEvaluate,doubleRankRows,doublePosition,doubleAnalyze,doublePairReason};
