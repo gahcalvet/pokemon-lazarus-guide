@@ -1,0 +1,36 @@
+{
+  "game": "Pokémon Dreamstone Mysteries",
+  "team": [
+    {
+      "name": "Linoone",
+      "types": ["dark", "normal"],
+      "ability": "Gluttony",
+      "moves": ["Headbutt", "Night Slash", "Pin Missile", "Lick"]
+    },
+    {
+      "name": "Quilava",
+      "ability": "Blaze",
+      "moves": ["Leer", "Smokescreen", "Flame Wheel", "Quick Attack"]
+    },
+    {
+      "name": "Bayleef",
+      "ability": "Overgrow",
+      "moves": ["Leech Seed", "Synthesis", "Magical Leaf", "Poison Powder"]
+    },
+    {
+      "name": "Honedge",
+      "ability": "No Guard",
+      "moves": ["Slash", "Night Slash", "Shadow Sneak", "Aerial Ace"]
+    },
+    {
+      "name": "Kirlia",
+      "ability": "Trace",
+      "moves": ["Hypnosis", "Draining Kiss", "Teleport", "Psybeam"]
+    },
+    {
+      "name": "Flaaffy",
+      "ability": "Static",
+      "moves": ["Tackle", "Charge", "Thunder Wave", "Thunder Shock"]
+    }
+  ]
+}
