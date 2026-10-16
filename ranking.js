@@ -110,4 +110,24 @@ function staySwitchAdvice(types,currentName,team,data){
  if(recovery.length)currentNotes.push(`${recovery.map(([name])=>name).join(', ')} pode recuperar HP conforme o dano causado.`);
  return {decision,reason,current,alternative,currentRisk,alternativeRisk,details:[statText(current),`Resposta imediata: ${positionAttackText(current)}.`,...currentNotes,alternative?`${alternative.pokemon.name}: recebe ${quickFactor(alternativeRisk)}; ${quickAttackReason(alternative)} ${statText(alternative)}`:'Não há outra opção disponível no sexteto.','Bases são referências, não atributos atuais. Trocar consome a ação; HP, boosts e movimentos adversários são desconhecidos.'].join(' ')};
 }
-if(typeof module!=='undefined')module.exports={quickRanking,quickAttacks,quickReason,quickCompareKeys,quickBulkLayers,staySwitchAdvice};
+function individualActionRanking(types,currentName,team,data,fakeOutAvailable=null){
+ if(!currentName||!Array.isArray(types)||!types.length||types.length>2)return {actions:[],fakeOutRelevant:false};
+ const current=team.find(p=>p.name===currentName);if(!current)return {actions:[],fakeOutRelevant:false};
+ const currentRisk=Math.max(...types.map(t=>damageTaken(t,current)));
+ const ghost=types.includes('ghost');
+ const attacks=current.moves.filter(([name,type])=>type&&!(name==='Fake Out'&&(ghost||fakeOutAvailable!==true))).map(([name,type])=>{
+  const facts=data.confirmedMoveFacts?.[name]||{},multiplier=effectiveness(type,types),stab=current.types.includes(type),priority=Number.isFinite(facts.priority)?facts.priority:((data.highPriority||[]).includes(name)?1:0);
+  return {kind:'stay',action:name,target:'Adversário',key:`stay:${name}`,reason:`${quickFactor(multiplier)} de efetividade${stab?' com STAB':''}${Number.isFinite(facts.power)?`; poder base ${facts.power}`:''}${priority?`; prioridade +${priority}`:''}.`,risk:currentRisk,score:[multiplier*(Number.isFinite(facts.power)?facts.power:40)*(stab?1.5:1),priority,-(facts.accuracyMode==='check'&&Number.isFinite(facts.accuracy)?100-facts.accuracy:0)],uncertainty:[name==='Fake Out'?'Só funciona no primeiro turno após entrar; flinch não é garantido.':null,name==='Knock Off'?'Bônus depende de item removível; item adversário desconhecido.':null,name==='Acrobatics'?'Bônus depende de Gligar estar sem item; item não confirmado.':null,name==='Pursuit'?'Bônus depende de o adversário tentar trocar.':null].filter(Boolean).join(' ')};
+ });
+ const actions=attacks.map(a=>({...a,type:'PERMANECER'}));
+ const parting=current.moves.some(([n])=>n==='Parting Shot');
+ if(parting)actions.push({kind:'pivot',type:'REPOSICIONAR',action:'Parting Shot',target:'Adversário',key:'pivot:Parting Shot',reason:'Reduz Ataque e Ataque Especial do alvo e permite reposicionar se funcionar.',risk:currentRisk,score:[currentRisk>1?72:36,0,0],uncertainty:'Torracat pode receber um golpe antes; efeito e reposicionamento não são garantidos.'});
+ const setup=current.moves.find(([n])=>n==='Calm Mind');
+ if(setup)actions.push({kind:'setup',type:'PERMANECER',action:'Calm Mind',target:'Próprio Kirlia',key:'setup:Calm Mind',reason:'Aumenta Ataque Especial e Defesa Especial em 1 estágio.',risk:currentRisk,score:[currentRisk<=.5?68:currentRisk<=1?42:8,0,0],uncertainty:currentRisk>1?'Ameaça imediata por tipo; HP, velocidade e golpe adversário desconhecidos. Setup consome a ação.':'Consome a ação; nenhum boost é presumido neste turno.'});
+ const swaps=team.filter(p=>p.name!==currentName).map(p=>({p,risk:Math.max(...types.map(t=>damageTaken(t,p)))})).filter(x=>x.risk<currentRisk).sort((a,b)=>a.risk-b.risk);
+ for(const x of swaps.slice(0,2))actions.push({kind:'switch',type:'TROCAR',action:`Trocar ${currentName} por ${x.p.name}`,target:'Troca convencional',key:`switch:${x.p.name}`,reason:`Exposição por tipo cai de ${quickFactor(currentRisk)} para ${quickFactor(x.risk)}.`,risk:x.risk,score:[x.risk<=.5?64:x.risk<=1?50:24,0,0],uncertainty:'A troca consome a ação do turno; '+x.p.name+' entra sem atacar neste turno.'});
+ actions.sort((a,b)=>quickCompareKeys(b.score,a.score));
+ const unique=[];for(const a of actions){if(unique.some(x=>x.key===a.key))continue;unique.push(a);if(unique.length===3)break}
+ return {actions:unique,fakeOutRelevant:current.name==='Torracat'&&!ghost&&current.moves.some(([n])=>n==='Fake Out')};
+}
+if(typeof module!=='undefined')module.exports={quickRanking,quickAttacks,quickReason,quickCompareKeys,quickBulkLayers,staySwitchAdvice,individualActionRanking};
