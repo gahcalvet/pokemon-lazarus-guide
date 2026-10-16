@@ -43,6 +43,8 @@ O grid de fundo usa uma máscara radial para desaparecer nas bordas; não interc
 
 Critérios lexicográficos, sem soma ponderada: defesa pelo pior multiplicador, depois pelo segundo, recuperação por Water Absorb, camadas de dominância conjunta de HP/Def/SpD, Intimidate/Parting Shot e resposta ofensiva. Entrada livre por efetividade, STAB, prioridade sustentada, velocidade base, setup e pivot em empate. Golpes condicionais não ganham bônus; os boosts de setup não são aplicados. Empates completos são explícitos.
 
+Na leitura do Pokémon ativo, o sinal agora descreve vantagens e riscos por tipo; não escolhe permanecer ou trocar sem HP e movimentos adversários. Ataques, trocas e ações táticas ficam em grupos separados porque seus critérios não formam uma pontuação comparável. A ordem dos ataques usa efetividade × STAB × poder-base, não dano calculado.
+
 Limite conhecido: poder, precisão e categoria dos golpes não foram confirmados na fonte específica e ficam fora dos desempates; não inferir Ataque versus Ataque Especial sem categoria. Não prevê dano, ordem individual, EVs, itens, HP atual, cobertura ou habilidade adversária. Bases modificadas verificadas incluem Gligar 75/75/105/35/70/60 e Lapras 130/75/80/95/95/60. Falha na referência do modo rápido preserva o guia original. Novas espécies consultam o catálogo por nome; dados e efeitos novos não verificados são sinalizados, sem valores inventados. Atualizar a referência verificada quando houver nova versão do jogo.
 
 

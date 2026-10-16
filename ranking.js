@@ -81,27 +81,24 @@ function staySwitchAdvice(types,currentName,team,data){
  if(!currentName||!Array.isArray(types)||!types.length||types.length>2)return null;
  const ranking=quickRanking(types,team,data),current=ranking.direct.find(r=>r.pokemon.name===currentName);
  if(!current)return null;
- const alternatives=ranking.direct.filter(r=>r.pokemon.name!==currentName),alternative=alternatives[0]||null;
+ const alternatives=ranking.direct.filter(r=>r.pokemon.name!==currentName);
  const riskOf=row=>Math.max(...row.received.map(x=>x.multiplier));
- const currentRisk=riskOf(current),alternativeRisk=alternative?riskOf(alternative):null;
- const attack=current.attacks.best,pressure=!!attack&&attack.multiplier>1&&!attack.conditional;
- const significantGain=alternative&&(currentRisk>=2&&alternativeRisk<=.5||currentRisk>=4&&alternativeRisk<=1);
+ const currentRisk=riskOf(current),alternative=alternatives.slice().sort((a,b)=>riskOf(a)-riskOf(b))[0]||null;
+ const alternativeRisk=alternative?riskOf(alternative):null;
+ const attack=current.attacks.best;
  let decision,reason;
  const label=types.map(t=>TYPES[t]).join(' / '),currentFactor=quickFactor(currentRisk);
  if(currentRisk===0){
-  decision='PERMANECER';reason=`${current.pokemon.name} já anula ${label}${current.heals?' com Water Absorb':''}; a troca não melhora a defesa contra o tipo informado.`;
- }else if(currentRisk<=1&&pressure){
-  decision='PERMANECER';reason=`${current.pokemon.name} recebe ${currentFactor} de ${label} e responde com ${positionAttackText(current)}. A troca não oferece melhora suficiente para abrir mão da ação.`;
- }else if(significantGain&&pressure){
-  decision='SITUACIONAL';reason=`${current.pokemon.name} recebe ${currentFactor} de ${label}, mas ameaça com ${positionAttackText(current)}. ${alternative.pokemon.name} reduz o risco para ${quickFactor(alternativeRisk)}; a escolha depende do HP e dos golpes adversários.`;
- }else if(significantGain){
-  decision='TROCAR';reason=`${current.pokemon.name} recebe ${currentFactor} de ${label} e não tem resposta super efetiva confirmada. ${alternative.pokemon.name} reduz o dano previsto por tipos para ${quickFactor(alternativeRisk)}${alternative.heals?' e anula Água com Water Absorb':''}; a troca consome a ação deste turno.`;
- }else if(currentRisk<=.5&&attack&&attack.multiplier>=1){
-  decision='PERMANECER';reason=`${current.pokemon.name} já resiste a ${label} (${currentFactor}) e pode responder com ${positionAttackText(current)}. Nenhuma alternativa melhora a defesa o bastante para exigir a troca.`;
+  decision='IMUNIDADE POR TIPO';reason=`${current.pokemon.name} é imune a ${label}${current.heals?' e Water Absorb recupera HP':''}. Isso descreve apenas o tipo do golpe; habilidade, cobertura e situação da batalha não foram informadas.`;
+ }else if(alternative&&alternativeRisk<currentRisk){
+  decision=currentRisk>1?'AVALIAR TROCA':'ALTERNATIVA MAIS RESISTENTE';
+  reason=`${current.pokemon.name} recebe ${currentFactor} de ${label}${attack?` e tem ${positionAttackText(current)}`:' e não tem golpe de dano confirmado'}; ${alternative.pokemon.name} recebe ${quickFactor(alternativeRisk)} por tipo${alternative.heals?' e anula Água com Water Absorb':''}. O golpe favorável não garante agir primeiro ou nocautear; trocar também consome a ação.`;
+ }else if(currentRisk>1){
+  decision='AMEAÇA POR TIPO';reason=`${current.pokemon.name} recebe ${currentFactor} de ${label}${attack?` e tem ${positionAttackText(current)}`:' sem golpe de dano confirmado'}; nenhuma alternativa da equipe reduz essa exposição. HP, velocidade, cobertura e golpe adversário podem mudar a decisão.`;
+ }else if(currentRisk<=.5&&attack&&attack.multiplier>1&&!attack.conditional){
+  decision='VANTAGEM DE TIPO';reason=`${current.pokemon.name} resiste a ${label} (${currentFactor}) e tem ${positionAttackText(current)}. São vantagens de tipo e golpe; sem HP, velocidade e golpe adversário não dá para concluir que ficar é a melhor jogada.`;
  }else{
-  decision='SITUACIONAL';
-  if(alternative&&alternativeRisk<currentRisk)reason=`${current.pokemon.name} recebe ${currentFactor} de ${label}${attack?` e responde com ${positionAttackText(current)}`:' sem golpe de dano confirmado'}; ${alternative.pokemon.name} reduziria para ${quickFactor(alternativeRisk)}, mas o ganho defensivo e a perda da ação não bastam para recomendar a troca com segurança.`;
-  else reason=`${current.pokemon.name} recebe ${currentFactor} de ${label}${attack?` e responde com ${positionAttackText(current)}`:' sem golpe de dano confirmado'}; nenhuma alternativa melhora claramente a defesa. HP, velocidade e golpes adversários podem mudar a decisão.`;
+  decision='SEM VANTAGEM CLARA';reason=`${current.pokemon.name} recebe ${currentFactor} de ${label}${attack?` e tem ${positionAttackText(current)}`:' sem golpe de dano confirmado'}; nenhuma alternativa reduz a exposição por tipo. HP, velocidade, cobertura e golpe adversário podem mudar a decisão.`;
  }
  const statText=row=>row.stats?`Bases HP/Def/Def. Esp./Vel.: ${row.stats.hp}/${row.stats.def}/${row.stats.spd}/${row.stats.spe}.`:'Bases do Pokémon não verificadas.';
  const currentNotes=[];
@@ -119,15 +116,19 @@ function individualActionRanking(types,currentName,team,data,fakeOutAvailable=nu
   const facts=data.confirmedMoveFacts?.[name]||{},multiplier=effectiveness(type,types),stab=current.types.includes(type),priority=Number.isFinite(facts.priority)?facts.priority:((data.highPriority||[]).includes(name)?1:0);
   return {kind:'stay',action:name,target:'Adversário',key:`stay:${name}`,reason:`${quickFactor(multiplier)} de efetividade${stab?' com STAB':''}${Number.isFinite(facts.power)?`; poder base ${facts.power}`:''}${priority?`; prioridade +${priority}`:''}.`,risk:currentRisk,score:[multiplier*(Number.isFinite(facts.power)?facts.power:40)*(stab?1.5:1),priority,-(facts.accuracyMode==='check'&&Number.isFinite(facts.accuracy)?100-facts.accuracy:0)],uncertainty:[name==='Fake Out'?'Só funciona no primeiro turno após entrar; flinch não é garantido.':null,name==='Knock Off'?'Bônus depende de item removível; item adversário desconhecido.':null,name==='Acrobatics'?'Bônus depende de Gligar estar sem item; item não confirmado.':null,name==='Pursuit'?'Bônus depende de o adversário tentar trocar.':null].filter(Boolean).join(' ')};
  });
- const actions=attacks.map(a=>({...a,type:'PERMANECER'}));
+ const actions=attacks.map(a=>({...a,type:'ATACAR'}));
  const parting=current.moves.some(([n])=>n==='Parting Shot');
  if(parting)actions.push({kind:'pivot',type:'REPOSICIONAR',action:'Parting Shot',target:'Adversário',key:'pivot:Parting Shot',reason:'Reduz Ataque e Ataque Especial do alvo e permite reposicionar se funcionar.',risk:currentRisk,score:[currentRisk>1?72:36,0,0],uncertainty:'Torracat pode receber um golpe antes; efeito e reposicionamento não são garantidos.'});
  const setup=current.moves.find(([n])=>n==='Calm Mind');
- if(setup)actions.push({kind:'setup',type:'PERMANECER',action:'Calm Mind',target:'Próprio Kirlia',key:'setup:Calm Mind',reason:'Aumenta Ataque Especial e Defesa Especial em 1 estágio.',risk:currentRisk,score:[currentRisk<=.5?68:currentRisk<=1?42:8,0,0],uncertainty:currentRisk>1?'Ameaça imediata por tipo; HP, velocidade e golpe adversário desconhecidos. Setup consome a ação.':'Consome a ação; nenhum boost é presumido neste turno.'});
+ if(setup)actions.push({kind:'setup',type:'PREPARAR',action:'Calm Mind',target:'Próprio Kirlia',key:'setup:Calm Mind',reason:'Aumenta Ataque Especial e Defesa Especial em 1 estágio.',risk:currentRisk,score:[currentRisk<=.5?68:currentRisk<=1?42:8,0,0],uncertainty:currentRisk>1?'Ameaça imediata por tipo; HP, velocidade e golpe adversário desconhecidos. Setup consome a ação.':'Consome a ação; nenhum boost é presumido neste turno.'});
  const swaps=team.filter(p=>p.name!==currentName).map(p=>({p,risk:Math.max(...types.map(t=>damageTaken(t,p)))})).filter(x=>x.risk<currentRisk).sort((a,b)=>a.risk-b.risk);
  for(const x of swaps.slice(0,2))actions.push({kind:'switch',type:'TROCAR',action:`Trocar ${currentName} por ${x.p.name}`,target:'Troca convencional',key:`switch:${x.p.name}`,reason:`Exposição por tipo cai de ${quickFactor(currentRisk)} para ${quickFactor(x.risk)}.`,risk:x.risk,score:[x.risk<=.5?64:x.risk<=1?50:24,0,0],uncertainty:'A troca consome a ação do turno; '+x.p.name+' entra sem atacar neste turno.'});
- actions.sort((a,b)=>quickCompareKeys(b.score,a.score));
- const unique=[];for(const a of actions){if(unique.some(x=>x.key===a.key))continue;unique.push(a);if(unique.length===3)break}
- return {actions:unique,fakeOutRelevant:current.name==='Torracat'&&!ghost&&current.moves.some(([n])=>n==='Fake Out')};
+ const unique=actions.filter((a,i)=>actions.findIndex(x=>x.key===a.key)===i);
+ const attackActions=unique.filter(a=>a.kind==='stay').sort((a,b)=>quickCompareKeys(b.score,a.score));
+ const switches=unique.filter(a=>a.kind==='switch').sort((a,b)=>a.risk-b.risk);
+ const tactical=unique.filter(a=>a.kind!=='stay'&&a.kind!=='switch');
+ // Keep unlike actions in separate groups; base-power points and switch scores
+ // are not comparable, and the available facts cannot identify one best turn.
+ return {actions:[...attackActions,...switches,...tactical],fakeOutRelevant:current.name==='Torracat'&&!ghost&&current.moves.some(([n])=>n==='Fake Out')};
 }
 if(typeof module!=='undefined')module.exports={quickRanking,quickAttacks,quickReason,quickCompareKeys,quickBulkLayers,staySwitchAdvice,individualActionRanking};

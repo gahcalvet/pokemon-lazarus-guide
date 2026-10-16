@@ -14,6 +14,11 @@ function runIndividualActionTests(team,data){
  const safer=individualActionRanking(['fighting'],'Kirlia',team,data,false);
  test('Calm Mind pode competir em posição defensiva favorável',()=>safer.actions.some(a=>a.action==='Calm Mind'));
  test('troca convencional consome o turno e entrante não ataca',()=>{const a=threatened.actions.find(x=>x.type==='TROCAR');return !!a&&a.uncertainty.includes('consome a ação')&&a.uncertainty.includes('sem atacar')});
+ const electricAdvice=staySwitchAdvice(['electric'],'Torracat',team,data);
+ test('vantagem ofensiva não força veredito permanecer quando Gligar é imune',()=>electricAdvice.decision==='ALTERNATIVA MAIS RESISTENTE'&&electricAdvice.alternative.pokemon.name==='Gligar'&&!electricAdvice.reason.includes('melhor jogada'));
+ const fullOptions=individualActionRanking(['electric'],'Torracat',team,data,false).actions;
+ test('opções ficam agrupadas por função e incluem mais que três ações',()=>{const firstSwitch=fullOptions.findIndex(a=>a.kind==='switch'),lastAttack=fullOptions.reduce((last,a,i)=>a.kind==='stay'?i:last,-1);return fullOptions.length>3&&firstSwitch>lastAttack});
+ test('imunidade gera fato de tipo, não recomendação absoluta de permanecer',()=>{const r=staySwitchAdvice(['electric'],'Gligar',team,data);return r.decision==='IMUNIDADE POR TIPO'&&!r.decision.includes('PERMANECER')});
  test('interface isolada de duplas continua disponível',()=>typeof doubleAnalyze==='function'&&typeof doubleTurnPlan==='function');
  return tests;
 }
