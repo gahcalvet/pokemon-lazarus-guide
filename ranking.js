@@ -129,6 +129,19 @@ function individualActionRanking(types,currentName,team,data,fakeOutAvailable=nu
  const tactical=unique.filter(a=>a.kind!=='stay'&&a.kind!=='switch');
  // Keep unlike actions in separate groups; base-power points and switch scores
  // are not comparable, and the available facts cannot identify one best turn.
- return {actions:[...attackActions,...switches,...tactical],fakeOutRelevant:current.name==='Torracat'&&!ghost&&current.moves.some(([n])=>n==='Fake Out')};
+ let recommended=[], recommendationReason='';
+ const safest=switches[0],bestAttack=attackActions[0];
+ if(safest&&((currentRisk>1&&safest.risk<currentRisk)||(currentRisk>=1&&safest.risk===0))){
+  recommended=switches.filter(a=>a.risk===safest.risk);recommendationReason=`Reduz a exposição por tipo de ${quickFactor(currentRisk)} para ${quickFactor(safest.risk)}. A troca perde a ação e não considera cobertura adversária.`;
+ }else if(bestAttack&&bestAttack.score[0]>0){
+  recommended=attackActions.filter(a=>quickCompareKeys(a.score,bestAttack.score)===0);recommendationReason='Melhor pressão ofensiva confirmada por tipo, STAB e poder-base. Não prevê dano, nocaute nem ordem de ação.';
+ }else if(tactical.length){
+  recommended=[tactical[0]];recommendationReason='Opção tática disponível; seu valor depende de HP, velocidade e resposta adversária.';
+ }else if(safest){
+  recommended=switches.filter(a=>a.risk===safest.risk);recommendationReason=`Reduz a exposição por tipo (${quickFactor(currentRisk)} → ${quickFactor(safest.risk)}), mas o ganho talvez não compense perder a ação.`;
+ }else if(bestAttack){
+  recommended=attackActions.filter(a=>quickCompareKeys(a.score,bestAttack.score)===0);recommendationReason=bestAttack.score[0]===0?'Nenhum golpe confirmado afeta esse tipo; esta é a opção ofensiva mais bem ranqueada entre as disponíveis.':'Entre as opções disponíveis, este golpe tem a melhor combinação confirmada de efetividade, STAB e poder-base.';
+ }
+ return {actions:[...attackActions,...switches,...tactical],recommended,recommendationReason,fakeOutRelevant:current.name==='Torracat'&&!ghost&&current.moves.some(([n])=>n==='Fake Out')};
 }
 if(typeof module!=='undefined')module.exports={quickRanking,quickAttacks,quickReason,quickCompareKeys,quickBulkLayers,staySwitchAdvice,individualActionRanking};
