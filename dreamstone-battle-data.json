@@ -1,0 +1,61 @@
+{
+  "game": "Pokémon Dreamstone Mysteries",
+  "version": "Final release · tag release · source commit edd19c8",
+  "typeChart": "types_info.h at B_UPDATED_TYPE_MATCHUPS = GEN_LATEST; standard 18-type matchups (updates through Gen VI)",
+  "dataSource": "https://github.com/dsmyst/dreamstone-mysteries/tree/release",
+  "pressureComparable": true,
+  "highPriority": ["Quick Attack", "Shadow Sneak"],
+  "species": {
+    "Linoone": {"hp":78,"atk":70,"def":61,"spa":50,"spd":61,"spe":100},
+    "Quilava": {"hp":58,"atk":64,"def":58,"spa":80,"spd":65,"spe":80},
+    "Bayleef": {"hp":60,"atk":62,"def":80,"spa":63,"spd":80,"spe":60},
+    "Honedge": {"hp":45,"atk":80,"def":100,"spa":35,"spd":37,"spe":28},
+    "Kirlia": {"hp":38,"atk":35,"def":35,"spa":65,"spd":55,"spe":50},
+    "Flaaffy": {"hp":70,"atk":55,"def":55,"spa":80,"spd":60,"spe":45}
+  },
+  "confirmedMoveFacts": {
+    "Headbutt": {"type":"normal","category":"physical","power":70,"accuracy":100,"accuracyMode":"check","pp":15,"priority":0,"effect":"Causa dano; pode fazer o alvo hesitar.","effectChance":"30% de chance de causar hesitação (flinch).","target":"selected-opponent"},
+    "Night Slash": {"type":"dark","category":"physical","power":70,"accuracy":100,"accuracyMode":"check","pp":15,"priority":0,"criticalHitStage":1,"effect":"Causa dano e tem estágio de crítico aumentado (+1).","target":"selected-opponent"},
+    "Pin Missile": {"type":"bug","category":"physical","power":25,"accuracy":95,"accuracyMode":"check","pp":20,"priority":0,"hits":"2–5","effect":"Atinge de 2 a 5 vezes; cada acerto tem poder base 25.","target":"selected-opponent"},
+    "Lick": {"type":"ghost","category":"physical","power":30,"accuracy":100,"accuracyMode":"check","pp":30,"priority":0,"effect":"Causa dano e pode paralisar o alvo.","effectChance":"30% de chance de paralisar.","target":"selected-opponent"},
+    "Leer": {"type":"normal","category":"status","power":0,"accuracy":100,"accuracyMode":"check","pp":30,"priority":0,"effect":"Reduz a Defesa do alvo em 1 estágio.","statChanges":{"target":"opponent","defense":-1},"target":"both-opponents"},
+    "Smokescreen": {"type":"normal","category":"status","power":0,"accuracy":100,"accuracyMode":"check","pp":20,"priority":0,"effect":"Reduz a Precisão do alvo em 1 estágio.","statChanges":{"target":"opponent","accuracy":-1},"target":"selected-opponent"},
+    "Flame Wheel": {"type":"fire","category":"physical","power":60,"accuracy":100,"accuracyMode":"check","pp":25,"priority":0,"effect":"Causa dano e pode queimar o alvo.","effectChance":"10% de chance de queimar.","target":"selected-opponent"},
+    "Quick Attack": {"type":"normal","category":"physical","power":40,"accuracy":100,"accuracyMode":"check","pp":30,"priority":1,"effect":"Causa dano com prioridade +1.","target":"selected-opponent"},
+    "Leech Seed": {"type":"grass","category":"status","power":0,"accuracy":90,"accuracyMode":"check","pp":10,"priority":0,"effect":"Semeia o alvo: ao fim dos turnos, drena 1/8 do HP máximo do alvo e recupera esse HP para o usuário. Falha contra alvos do tipo Planta.","role":"seed","target":"selected-opponent"},
+    "Synthesis": {"type":"grass","category":"status","power":0,"accuracy":null,"accuracyMode":"not-applicable","pp":5,"priority":0,"effect":"Recupera HP do usuário: 1/2 do HP máximo normalmente, 2/3 sob sol intenso e 1/4 sob outras condições climáticas.","role":"heal-self","target":"self"},
+    "Magical Leaf": {"type":"grass","category":"special","power":60,"accuracy":null,"accuracyMode":"bypass","pp":20,"priority":0,"effect":"Causa dano especial e não falha por verificações normais de precisão/evasão.","target":"selected-opponent"},
+    "Poison Powder": {"type":"poison","category":"status","power":0,"accuracy":75,"accuracyMode":"check","pp":35,"priority":0,"effect":"Tenta envenenar o alvo.","target":"selected-opponent"},
+    "Slash": {"type":"normal","category":"physical","power":70,"accuracy":100,"accuracyMode":"check","pp":20,"priority":0,"criticalHitStage":1,"effect":"Causa dano e tem estágio de crítico aumentado (+1).","target":"selected-opponent"},
+    "Shadow Sneak": {"type":"ghost","category":"physical","power":40,"accuracy":100,"accuracyMode":"check","pp":30,"priority":1,"effect":"Causa dano com prioridade +1.","target":"selected-opponent"},
+    "Aerial Ace": {"type":"flying","category":"physical","power":60,"accuracy":null,"accuracyMode":"bypass","pp":20,"priority":0,"effect":"Causa dano físico e não falha por verificações normais de precisão/evasão.","target":"selected-opponent"},
+    "Hypnosis": {"type":"psychic","category":"status","power":0,"accuracy":60,"accuracyMode":"check","pp":20,"priority":0,"effect":"Tenta colocar o alvo para dormir.","target":"selected-opponent"},
+    "Draining Kiss": {"type":"fairy","category":"special","power":50,"accuracy":100,"accuracyMode":"check","pp":10,"priority":0,"effect":"Causa dano especial e recupera HP equivalente a 75% do dano causado.","drainFraction":0.75,"target":"selected-opponent"},
+    "Teleport": {"type":"psychic","category":"status","power":0,"accuracy":null,"accuracyMode":"not-applicable","pp":20,"priority":-6,"effect":"Em batalha contra treinador, permite ao usuário sair de campo e ser substituído; em batalha selvagem, tenta fugir. Tem prioridade -6.","role":"pivot","target":"self"},
+    "Psybeam": {"type":"psychic","category":"special","power":65,"accuracy":100,"accuracyMode":"check","pp":20,"priority":0,"effect":"Causa dano e pode confundir o alvo.","effectChance":"10% de chance de confundir.","target":"selected-opponent"},
+    "Tackle": {"type":"normal","category":"physical","power":40,"accuracy":100,"accuracyMode":"check","pp":35,"priority":0,"effect":"Causa dano físico.","target":"selected-opponent"},
+    "Charge": {"type":"electric","category":"status","power":0,"accuracy":null,"accuracyMode":"not-applicable","pp":20,"priority":0,"effect":"Aumenta a Defesa Especial do usuário em 1 estágio e dobra o poder do próximo golpe Elétrico usado antes de sair de campo.","statChanges":{"target":"user","specialDefense":1},"role":"setup","target":"self"},
+    "Thunder Wave": {"type":"electric","category":"status","power":0,"accuracy":90,"accuracyMode":"check","pp":20,"priority":0,"effect":"Tenta paralisar o alvo.","target":"selected-opponent"},
+    "Thunder Shock": {"type":"electric","category":"special","power":40,"accuracy":100,"accuracyMode":"check","pp":30,"priority":0,"effect":"Causa dano e pode paralisar o alvo.","effectChance":"10% de chance de paralisar.","target":"selected-opponent"}
+  },
+  "doublesMechanics": {
+    "Leer": {"target":"both-opponents","role":"debuff"},
+    "Smokescreen": {"target":"selected-opponent","role":"debuff"},
+    "Leech Seed": {"target":"selected-opponent","role":"seed"},
+    "Synthesis": {"target":"self","role":"heal-self"},
+    "Magical Leaf": {"target":"selected-opponent"},
+    "Poison Powder": {"target":"selected-opponent","role":"status"},
+    "Hypnosis": {"target":"selected-opponent","role":"status"},
+    "Teleport": {"target":"self","role":"pivot"},
+    "Charge": {"target":"self","role":"setup"},
+    "Thunder Wave": {"target":"selected-opponent","role":"status"}
+  },
+  "abilityNotes": {
+    "Gluttony":"Berry-related ability; no berry item is confirmed, so it does not change these rankings.",
+    "Blaze":"Can strengthen Fire moves at low HP; current HP is unknown and the boost is not assumed.",
+    "Overgrow":"Can strengthen Grass moves at low HP; current HP is unknown and the boost is not assumed.",
+    "No Guard":"Moves used by or targeting Honedge do not miss from ordinary accuracy/evasion checks; individual opponent moves are unknown.",
+    "Trace":"Copies an opponent ability on entry; opponent ability and resulting effect are unknown.",
+    "Static":"Contacting attackers may be paralyzed; no contact move or chance is assumed for an unknown opponent."
+  }
+}

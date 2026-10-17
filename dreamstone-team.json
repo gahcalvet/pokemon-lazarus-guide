@@ -5,32 +5,37 @@
       "name": "Linoone",
       "types": ["dark", "normal"],
       "ability": "Gluttony",
-      "moves": ["Headbutt", "Night Slash", "Pin Missile", "Lick"]
+      "moves": [["Headbutt", "normal"], ["Night Slash", "dark"], ["Pin Missile", "bug"], ["Lick", "ghost"]]
     },
     {
       "name": "Quilava",
+      "types": ["fire"],
       "ability": "Blaze",
-      "moves": ["Leer", "Smokescreen", "Flame Wheel", "Quick Attack"]
+      "moves": [["Leer", "normal"], ["Smokescreen", "normal"], ["Flame Wheel", "fire"], ["Quick Attack", "normal"]]
     },
     {
       "name": "Bayleef",
+      "types": ["grass"],
       "ability": "Overgrow",
-      "moves": ["Leech Seed", "Synthesis", "Magical Leaf", "Poison Powder"]
+      "moves": [["Leech Seed", "grass"], ["Synthesis", "grass"], ["Magical Leaf", "grass"], ["Poison Powder", "poison"]]
     },
     {
       "name": "Honedge",
+      "types": ["steel", "ghost"],
       "ability": "No Guard",
-      "moves": ["Slash", "Night Slash", "Shadow Sneak", "Aerial Ace"]
+      "moves": [["Slash", "normal"], ["Night Slash", "dark"], ["Shadow Sneak", "ghost"], ["Aerial Ace", "flying"]]
     },
     {
       "name": "Kirlia",
+      "types": ["psychic", "fairy"],
       "ability": "Trace",
-      "moves": ["Hypnosis", "Draining Kiss", "Teleport", "Psybeam"]
+      "moves": [["Hypnosis", "psychic"], ["Draining Kiss", "fairy"], ["Teleport", "psychic"], ["Psybeam", "psychic"]]
     },
     {
       "name": "Flaaffy",
+      "types": ["electric"],
       "ability": "Static",
-      "moves": ["Tackle", "Charge", "Thunder Wave", "Thunder Shock"]
+      "moves": [["Tackle", "normal"], ["Charge", "electric"], ["Thunder Wave", "electric"], ["Thunder Shock", "electric"]]
     }
   ]
 }

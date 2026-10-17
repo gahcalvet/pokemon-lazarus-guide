@@ -60,9 +60,8 @@ function doublePositionHTML(position,opponents,data){
 }
 function renderDoubles(){
  const output=document.querySelector('#doubles-results'),prompt=document.querySelector('#doubles-prompt');
- if(activeGame==='dreamstone'){output.hidden=true;prompt.hidden=false;prompt.textContent='Análise de duplas Dreamstone indisponível: os tipos, efeitos dos golpes e regras deste ROM ainda não foram confirmados. Os Pokémon selecionados abaixo vêm do perfil Dreamstone; nenhum cálculo ou dado de Lazarus é reutilizado.';return}
  if(!team.length){output.hidden=true;prompt.textContent='Carregando a equipe confirmada…';return}
- if(battleData.unavailable){output.hidden=true;prompt.textContent='Os dados de batalha não carregaram. O guia individual continua disponível.';return}
+ if(battleData.unavailable){output.hidden=true;prompt.textContent='Os dados de batalha deste perfil não carregaram. O guia elemental continua disponível.';return}
  const result=doubleAnalyze(doublesState.opponents,team,battleData,doublesState.allies);
  output.hidden=!result.valid;prompt.hidden=result.valid;
  if(!result.valid){prompt.textContent=result.error;return}
@@ -102,4 +101,3 @@ function setDoublesRoster(roster,game){
  const options=roster.map(p=>[p.name,p.name]);
  [0,1].forEach(i=>{const select=document.querySelector(`#ally-${i}`);select.innerHTML=doubleSelectOptions(options,'Não informado',doublesState.allies[1-i]);select.value=doublesState.allies[i]});
 }
-

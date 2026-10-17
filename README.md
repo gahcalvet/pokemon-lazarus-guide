@@ -69,3 +69,7 @@ Validação: abrir `tests.html` no site. Os testes originais são preservados e 
 ## Retificação e auditoria · 15/10/2026
 
 A confirmação mais recente do jogador corrige o registro do Gligar: Quick Attack, Acrobatics, **Rock Tomb**, Knock Off. Rock Smash estava registrado por informação anterior incorreta e foi substituído exclusivamente por Rock Tomb, Pedra, físico, poder 60 e precisão 95, sem STAB. Sand Tomb e Slash foram recusados. A matriz e os algoritmos são preservados; a cobertura é recalculada pela equipe compartilhada. O cuidado sobre Sombrio foi corrigido para remover a referência ao golpe Lutador ausente. Consulte [o relatório da auditoria](AUDITORIA.md) e execute [os testes](tests.html).
+
+## Dreamstone Mysteries
+
+`dreamstone-team.json` registra apenas o sexteto atual confirmado; `dreamstone-battle-data.json` mantém os dados da ROM separados da base Lazarus. Os tipos, bases, golpes e efeitos foram conferidos no código-fonte aberto da [versão final Dreamstone Mysteries](https://github.com/dsmyst/dreamstone-mysteries/tree/release) (tag `release`, commit `edd19c8`). Linoone permanece Dark/Normal conforme o registro confirmado pelo jogador. HP atual, clima, estado adversário e efeitos condicionais não são presumidos. Os modos individual e duplas usam a equipe e os fatos do perfil selecionado. Os testes de regressão específicos estão em `dreamstone-tests.js` e são incluídos em `tests.html`.

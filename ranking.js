@@ -3,11 +3,11 @@
 // Base stats are reference data, not the individual's current stats.
 const QUICK_CONDITIONAL = new Set(['Fake Out','First Impression','Sucker Punch','Thunderclap','Upper Hand','Bide']);
 const QUICK_SETUP = new Set(['Swords Dance']);
-const QUICK_KNOWN_ABILITIES = new Set(['Water Absorb','Solid Rock','Intimidate','No Guard','Hyper Cutter','Shell Armor','Synchronize']);
+const QUICK_KNOWN_ABILITIES = new Set(['Water Absorb','Solid Rock','Intimidate','No Guard','Hyper Cutter','Shell Armor','Synchronize','Gluttony','Blaze','Overgrow','Trace','Static']);
 function quickCompareKeys(a,b){for(let i=0;i<a.length;i++){if(a[i]!==b[i])return a[i]-b[i]}return 0}
 function quickStats(p,data){const s=data.species?.[p.name];return s&&['hp','def','spd','spe'].every(k=>Number.isFinite(s[k]))?s:null}
 function quickAttacks(p,types,data){
- const candidates=p.moves.filter(m=>m[1]).map(([name,type])=>({name,type,multiplier:effectiveness(type,types),stab:p.types.includes(type),priority:(data.highPriority||[]).includes(name),conditional:QUICK_CONDITIONAL.has(name),facts:data.confirmedMoveFacts?.[name]||{}}));
+ const candidates=p.moves.filter(m=>m[1]).map(([name,type])=>({name,type,multiplier:effectiveness(type,types),stab:p.types.includes(type),priority:Number.isFinite(data.confirmedMoveFacts?.[name]?.priority)?data.confirmedMoveFacts[name].priority>0:(data.highPriority||[]).includes(name),conditional:QUICK_CONDITIONAL.has(name),facts:data.confirmedMoveFacts?.[name]||{}})).filter(m=>m.facts.category!=='status');
  const sustained=candidates.filter(m=>!m.conditional);
  const pool=sustained.length?sustained:candidates;
  pool.sort((a,b)=>quickCompareKeys([-a.multiplier,-Number(a.stab),-Number(a.priority)],[-b.multiplier,-Number(b.stab),-Number(b.priority)]));
@@ -33,7 +33,8 @@ function quickRanking(types,team,data){
   const heals=types.includes('water')&&p.ability==='Water Absorb';
   const best=attacks.best;
   // Main immediate attack first; never assume a setup boost or a conditional bonus.
-  const freeKey=[-(best?.multiplier||0),-Number(best?.stab||false),-Number(best?.priority&&!best?.conditional),-(hasSpeed?stats.spe:0),-Number(p.moves.some(m=>QUICK_SETUP.has(m[0]))),-Number(p.moves.some(m=>m[0]==='Parting Shot'))];
+  const setupMoves=data.game==='Pokémon Dreamstone Mysteries'?new Set([...QUICK_SETUP,'Charge']):QUICK_SETUP;
+  const freeKey=[-(best?.multiplier||0),-Number(best?.stab||false),-Number(best?.priority&&!best?.conditional),-(hasSpeed?stats.spe:0),-Number(p.moves.some(m=>setupMoves.has(m[0]))),-Number(p.moves.some(m=>m[0]==='Parting Shot'))];
   return {pokemon:p,stats,attacks,received,heals,freeKey,defenseKey:[values[0],values[1]??values[0],-Number(heals)]};
  });
  quickBulkLayers(rows);
@@ -108,6 +109,7 @@ function staySwitchAdvice(types,currentName,team,data){
  return {decision,reason,current,alternative,currentRisk,alternativeRisk,details:[statText(current),`Resposta imediata: ${positionAttackText(current)}.`,...currentNotes,alternative?`${alternative.pokemon.name}: recebe ${quickFactor(alternativeRisk)}; ${quickAttackReason(alternative)} ${statText(alternative)}`:'Não há outra opção disponível no sexteto.','Bases são referências, não atributos atuais. Trocar consome a ação; HP, boosts e movimentos adversários são desconhecidos.'].join(' ')};
 }
 function individualActionRanking(types,currentName,team,data,fakeOutAvailable=null){
+ if(data.game==='Pokémon Dreamstone Mysteries')return dreamstoneIndividualActionRanking(types,currentName,team,data);
  if(!currentName||!Array.isArray(types)||!types.length||types.length>2)return {actions:[],fakeOutRelevant:false};
  const current=team.find(p=>p.name===currentName);if(!current)return {actions:[],fakeOutRelevant:false};
  const currentRisk=Math.max(...types.map(t=>damageTaken(t,current)));
@@ -143,5 +145,29 @@ function individualActionRanking(types,currentName,team,data,fakeOutAvailable=nu
   recommended=attackActions.filter(a=>quickCompareKeys(a.score,bestAttack.score)===0);recommendationReason=bestAttack.score[0]===0?'Nenhum golpe confirmado afeta esse tipo; esta é a opção ofensiva mais bem ranqueada entre as disponíveis.':'Entre as opções disponíveis, este golpe tem a melhor combinação confirmada de efetividade, STAB e poder-base.';
  }
  return {actions:[...attackActions,...switches,...tactical],recommended,recommendationReason,fakeOutRelevant:current.name==='Torracat'&&!ghost&&current.moves.some(([n])=>n==='Fake Out')};
+}
+function dreamstoneIndividualActionRanking(types,currentName,team,data){
+ if(!currentName||!Array.isArray(types)||!types.length||types.length>2)return {actions:[],recommended:[],fakeOutRelevant:false};
+ const current=team.find(p=>p.name===currentName);if(!current)return {actions:[],recommended:[],fakeOutRelevant:false};
+ const currentRisk=Math.max(...types.map(t=>damageTaken(t,current)));
+ const attacks=current.moves.map(([name,type])=>({name,type,facts:data.confirmedMoveFacts?.[name]||{}})).filter(m=>m.type&&['physical','special'].includes(m.facts.category)).map(m=>{
+  const multiplier=effectiveness(m.type,types),stab=current.types.includes(m.type),priority=m.facts.priority||0,accuracy=m.facts.accuracy;
+  const effects=[m.facts.criticalHitStage?'alta chance de crítico':null,m.facts.effectChance||null].filter(Boolean).join('; ');
+  return {kind:'stay',type:'ATACAR',action:m.name,target:'Adversário',key:`stay:${m.name}`,reason:`${quickFactor(multiplier)}${stab?' com STAB':''}; poder-base ${m.facts.power}${m.facts.accuracyMode==='bypass'?' · não testa precisão':Number.isFinite(accuracy)?` · precisão ${accuracy}%`:''}${priority?` · prioridade +${priority}`:''}${effects?` · ${effects}`:''}.`,risk:currentRisk,multiplier,score:[multiplier*m.facts.power*(stab?1.5:1),priority,m.facts.accuracyMode==='bypass'||current.ability==='No Guard'?100:Number.isFinite(accuracy)?accuracy:0],uncertainty:''};
+ }).sort((a,b)=>quickCompareKeys(b.score,a.score));
+ const tactical=current.moves.map(([name])=>({name,facts:data.confirmedMoveFacts?.[name]||{}})).filter(m=>m.facts.category==='status').map(({name,facts})=>{
+  const role=facts.role||'status',kind=role==='pivot'?'pivot':role==='setup'?'setup':role==='heal-self'?'heal':role==='seed'?'support':role==='debuff'?'support':'support';
+  const uncertainty=role==='heal-self'?'Valor depende do HP faltante e do clima; não foram informados.':role==='setup'?'Consome a ação; depende de sobreviver e agir antes de receber novo dano.':role==='pivot'?'Prioridade -6: o usuário pode ser atingido antes de sair; a troca também consome sua ação.':role==='seed'?'Depende de acertar e o alvo não ser imune; recuperação ocorre ao fim de turnos.':'Depende da precisão e da condição/imunidade do alvo, que são desconhecidas.';
+  return {kind,type:role==='pivot'?'REPOSICIONAR':role==='setup'?'PREPARAR':role==='heal-self'?'RECUPERAR':'SUPORTE',action:name,target:facts.target==='self'?'Próprio Pokémon':'Adversário',key:`${kind}:${name}`,reason:facts.effect||'Efeito de suporte confirmado.',risk:currentRisk,score:[0,0,0],uncertainty};
+ });
+ const switches=team.filter(p=>p.name!==currentName).map(p=>({p,risk:Math.max(...types.map(t=>damageTaken(t,p)))})).filter(x=>x.risk<currentRisk).sort((a,b)=>a.risk-b.risk).slice(0,2).map(x=>({kind:'switch',type:'TROCAR',action:`Trocar ${currentName} por ${x.p.name}`,target:'Troca convencional',key:`switch:${x.p.name}`,reason:`Exposição por tipo cai de ${quickFactor(currentRisk)} para ${quickFactor(x.risk)}.`,risk:x.risk,score:[0,0,0],uncertainty:'A troca consome a ação; o entrante não ataca neste turno e ainda pode receber golpes.'}));
+ const attackActions=attacks.map(a=>({...a,uncertainty:a.uncertainty||'Não estima dano, KO ou velocidade real.'}));
+ const recommended=[];let recommendationReason='';
+ if(currentRisk>1&&switches.length){recommended.push(switches[0]);recommendationReason=`A troca indicada reduz a maior exposição por tipo de ${quickFactor(currentRisk)} para ${quickFactor(switches[0].risk)}; ainda custa a ação e não inclui cobertura adversária.`;}
+ if(attackActions.length){const best=attackActions[0];if(best.score[0]>0){recommended.push(...attackActions.slice(0,Math.min(2,3-recommended.length)));if(!recommendationReason)recommendationReason='Ataques ordenados por efetividade × poder-base × STAB, depois prioridade e precisão. As opções abaixo são alternativas de turno.';else recommendationReason+=' Como alternativa ficando em campo, ataques são ordenados por efetividade, STAB, poder-base, prioridade e precisão.';}}
+ if(tactical.length&&recommended.length<3){const options=tactical.filter(a=>!recommended.some(r=>r.key===a.key)).slice(0,3-recommended.length);recommended.push(...options);if(options.length)recommendationReason+=(recommendationReason?' ':'')+'Suporte, setup, cura e reposicionamento são alternativas condicionais; confira a situação indicada em cada opção.';}
+ if(!recommended.length&&tactical.length){recommended.push(...tactical.slice(0,3));recommendationReason='Não há golpe de dano confirmado; estas opções de suporte dependem das condições indicadas.';}
+ const actions=[...attackActions,...switches,...tactical];
+ return {actions,recommended:recommended.slice(0,3),recommendationReason,fakeOutRelevant:false};
 }
 if(typeof module!=='undefined')module.exports={quickRanking,quickAttacks,quickReason,quickCompareKeys,quickBulkLayers,staySwitchAdvice,individualActionRanking};

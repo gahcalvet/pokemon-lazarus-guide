@@ -1,6 +1,6 @@
 'use strict';
 // Pure doubles analysis. Each of two opponents may have one or two selected types.
-// Shared source: TYPES/effectiveness/damageTaken + team.json + battle-data.json.
+// Profile-neutral analysis; callers pass the selected roster and its ROM data.
 // Ordered criteria and Pareto fronts; no weighted score, simulated HP or KO claim.
 function doublePairs(team){return team.flatMap((p,i)=>team.slice(i+1).map(q=>[p,q]))}
 function doubleCompare(a,b){return quickCompareKeys(a,b)}
@@ -20,7 +20,7 @@ function doubleAllyImpact(move,partner){
  return {partner:partner.name,multiplier:received,natural:byTypes===0,ability:byTypes!==0&&received===0,heals:move.type==='water'&&partner.ability==='Water Absorb',protected:false};
 }
 function doubleActions(p,partner,opponents,data){
- const moves=p.moves.filter(m=>m[1]).map(m=>doubleMove(p,m,opponents,data));
+ const moves=p.moves.filter(m=>m[1]&&['physical','special'].includes(data.confirmedMoveFacts?.[m[0]]?.category)).map(m=>doubleMove(p,m,opponents,data));
  const sustained=moves.filter(m=>!m.conditional),pool=sustained.length?sustained:moves;
  const actions=[];
  pool.forEach(m=>{
@@ -68,6 +68,10 @@ function doubleSupport(pair,opponents,data){
   const partner=pair[1-index];
   if(p.ability==='Intimidate')notes.push({kind:'intimidate',owner:p.name,text:`${p.name}: Intimidate pode reduzir o Ataque dos dois adversários ao entrar, se forem afetados. Ajuda ambos os aliados contra golpes físicos; não reduz dano especial nem é reaplicado por permanecer.`});
   if(p.ability==='No Guard')notes.push({kind:'no-guard',owner:p.name,text:`${p.name}: No Guard também permite que os golpes dirigidos a ele não errem; não melhora a precisão do parceiro.`});
+  if(p.ability==='Static')notes.push({kind:'static',owner:p.name,text:`${p.name}: Static pode paralisar atacantes que usem golpes de contato. Sem o golpe e a habilidade adversários, o efeito não entra nos rankings.`});
+  if(p.ability==='Blaze'||p.ability==='Overgrow')notes.push({kind:'low-hp-ability',owner:p.name,text:`${p.name}: ${p.ability} pode fortalecer golpes ${p.ability==='Blaze'?'de Fogo':'de Planta'} com HP baixo; HP atual desconhecido, bônus não presumido.`});
+  if(p.ability==='Gluttony')notes.push({kind:'gluttony',owner:p.name,text:`${p.name}: Gluttony altera o limiar de ativação de Berries; item não informado, então nenhum efeito foi presumido.`});
+  if(p.ability==='Trace')notes.push({kind:'trace',owner:p.name,text:`${p.name}: Trace copia a habilidade do adversário ao entrar; habilidade adversária desconhecida, nenhum bônus foi presumido.`});
   p.moves.forEach(m=>{
    const move=doubleMove(p,m,opponents,data),f=move.facts;
    if(f.role==='fake-out'){
@@ -77,6 +81,11 @@ function doubleSupport(pair,opponents,data){
    if(f.role==='protect')notes.push({kind:'protect',owner:p.name,text:`${p.name}: Protect protege o próprio usuário enquanto ${partner.name} pode agir. Não protege diretamente o parceiro; repetições não têm sucesso garantido.`});
    if(f.role==='pivot')notes.push({kind:'pivot',owner:p.name,text:`${p.name}: Parting Shot reduz Ataque/SpA dos alvos afetados e permite recuar, se funcionar. Alcance em duplas não confirmado; sem bônus por afetar ambos. Consome sua ação.`});
    if(f.role==='heal-ally')notes.push({kind:'heal-ally',owner:p.name,text:`${p.name}: Heal Pulse pode recuperar HP de ${partner.name}, consumindo a ação de ${p.name}. Não cura o próprio usuário e não garante sobreviver até agir.`});
+   if(f.role==='heal-self')notes.push({kind:'heal-self',owner:p.name,text:`${p.name}: ${m[0]} recupera HP próprio. Valor depende do HP faltante e do clima; ambos desconhecidos, não é bônus defensivo aplicado ao ranking.`});
+   if(f.role==='seed')notes.push({kind:'seed',owner:p.name,text:`${p.name}: Leech Seed pode drenar 1/8 do HP máximo do alvo ao fim dos turnos e devolver ao usuário; requer acerto e falha contra Planta.`});
+   if(f.role==='setup')notes.push({kind:'setup',owner:p.name,text:`${p.name}: ${m[0]} prepara o próprio usuário para uma ação futura; consome este turno e o benefício depende de sobreviver.`});
+   if(f.role==='status')notes.push({kind:'status',owner:p.name,text:`${p.name}: ${m[0]} tenta aplicar um efeito de status conforme a precisão e as imunidades do alvo; o resultado não é presumido.`});
+   if(f.role==='debuff')notes.push({kind:'debuff',owner:p.name,text:`${p.name}: ${m[0]} reduz atributos do(s) alvo(s), mas não causa dano. Alcance em duplas: ${f.target==='both-opponents'?'ambos os adversários':'um adversário selecionado'}.`});
    if(m[0]==='Swords Dance')notes.push({kind:'setup',owner:p.name,text:`${p.name}: Swords Dance aumenta o Ataque físico em dois estágios, usa um turno e não impede os dois adversários de focarem nele. Nenhum boost foi aplicado.`});
    if(m[0]==='Calm Mind')notes.push({kind:'setup',owner:p.name,text:`${p.name}: Calm Mind aumenta Ataque Especial e Defesa Especial em um estágio, usa um turno e não impede os dois adversários de focarem nele. Nenhum boost foi aplicado.`});
    if(f.powerDoublesWithoutItem)notes.push({kind:'item',owner:p.name,text:`${p.name}: Acrobatics tem STAB, mas o bônus sem item não foi presumido. O item equipado precisa estar confirmado.`});
@@ -122,6 +131,10 @@ function doublePositionSupport(p,entering,opponents,data){
  if(p.ability==='Intimidate')options.push(entering
   ?'Intimidate pode reduzir o Ataque físico dos dois adversários ao entrar, se forem afetados; não altera golpes especiais.'
   :'Intimidate não é reativado por permanecer em campo; qualquer redução anterior não foi presumida.');
+ if(p.ability==='Static')options.push('Static pode paralisar quem atingir o usuário com golpe de contato; o ataque e a habilidade adversários são desconhecidos.');
+ if(p.ability==='Blaze'||p.ability==='Overgrow')options.push(`${p.ability} pode fortalecer golpes ${p.ability==='Blaze'?'de Fogo':'de Planta'} com HP baixo; HP atual desconhecido, bônus não presumido.`);
+ if(p.ability==='Gluttony')options.push('Gluttony altera o limiar de ativação de Berries; item não informado, efeito não presumido.');
+ if(p.ability==='Trace')options.push('Trace copia a habilidade do adversário ao entrar; habilidade adversária desconhecida, benefício não presumido.');
  p.moves.forEach(([name])=>{
   const facts=doubleFacts(name,data);
   if(facts.role==='fake-out')options.push('Fake Out tem prioridade +3, mas só funciona no primeiro turno após entrar; não sabemos se essa janela está disponível.');
@@ -129,6 +142,11 @@ function doublePositionSupport(p,entering,opponents,data){
   if(name==='Swords Dance')options.push('Swords Dance consome uma ação e pode aumentar o Ataque em dois estágios se o usuário conseguir agir; nenhum boost foi presumido.');
   if(name==='Calm Mind')options.push('Calm Mind consome uma ação e pode elevar Ataque Especial e Defesa Especial em um estágio; nenhum boost foi presumido.');
   if(facts.role==='pivot')options.push('Parting Shot pode reduzir Ataque e Ataque Especial e reposicionar se funcionar; alcance em duplas não confirmado, então não foi tratado como troca segura nem como efeito nos dois alvos.');
+  if(facts.role==='heal-self')options.push(`${name} recupera HP próprio; valor depende do HP faltante e do clima, que não são conhecidos.`);
+  if(facts.role==='seed')options.push('Leech Seed drena HP do alvo ao fim dos turnos se acertar; falha contra Planta e não evita ataques neste turno.');
+  if(facts.role==='setup')options.push(`${name} prepara o usuário para o próximo turno; consome a ação atual e nenhum boost foi aplicado ao ranking.`);
+  if(facts.role==='status')options.push(`${name} tenta aplicar status; precisão, imunidades e estado do adversário ainda condicionam o efeito.`);
+  if(facts.role==='debuff')options.push(`${name} reduz atributo(s) do alvo; em duplas atinge ${facts.target==='both-opponents'?'ambos os adversários':'um adversário selecionado'} e não causa dano neste turno.`);
  });
  return options;
 }
@@ -226,15 +244,16 @@ function doubleAnalyze(opponents,team,data,allySlots=['','']){
  if(new Set(allies).size!==allies.length)return {...invalid,error:'Escolha Pokémon diferentes para os slots aliados.'};
  if(new Set(team.map(p=>p.name)).size!==team.length)return {...invalid,error:'Há integrantes duplicados nos dados da equipe.'};
  if(allies.some(n=>!team.some(p=>p.name===n)))return {...invalid,error:'Um aliado selecionado não pertence à equipe confirmada.'};
- const comparable=team.flatMap(p=>p.moves.filter(m=>m[1]).map(m=>doubleMove(p,m,opponents,data))).every(m=>m.known);
+ const damageEntries=team.flatMap(p=>p.moves.filter(m=>m[1]&&['physical','special'].includes(data.confirmedMoveFacts?.[m[0]]?.category)).map(m=>doubleMove(p,m,opponents,data)));
+ const comparable=damageEntries.every(m=>m.known);
  const analysisData={...data,pressureComparable:comparable};
  const all=doublePairs(team).map(pair=>doubleEvaluate(pair,opponents,analysisData)),rankings=doubleRankRows(all);
  const eligible=allies.length===1?all.filter(r=>r.pair.some(p=>p.name===allies[0])):all;
  const eligibleRanks=allies.length===1?doubleRankRows(eligible.map(r=>({...r}))):rankings;
  const warnings=[];
  if(team.some(p=>!QUICK_KNOWN_ABILITIES.has(p.ability)))warnings.push('Há habilidade sem mecânica incorporada; nenhum efeito defensivo novo foi presumido.');
- const damageMoves=team.flatMap(p=>p.moves.filter(m=>m[1]).map(m=>doubleMove(p,m,opponents,data)));
- if(!damageMoves.every(m=>Number.isFinite(m.facts.power)&&(Number.isFinite(m.facts.accuracy)||m.facts.accuracyMode==='bypass')&&['physical','special'].includes(m.facts.category)))warnings.push('Poder, precisão e categoria ainda têm verificação parcial no Lazarus. Não foram usados para comparar dano, Ataque/SpA ou garantir eliminações.');
+ const damageMoves=team.flatMap(p=>p.moves.filter(m=>m[1]&&['physical','special'].includes(data.confirmedMoveFacts?.[m[0]]?.category)).map(m=>doubleMove(p,m,opponents,data)));
+ if(!damageMoves.every(m=>Number.isFinite(m.facts.power)&&(Number.isFinite(m.facts.accuracy)||m.facts.accuracyMode==='bypass')&&['physical','special'].includes(m.facts.category)))warnings.push('Poder, precisão ou categoria de algum golpe ainda não foram confirmados. Não entram na comparação de pressão ofensiva.');
  if(team.some(p=>p.moves.some(m=>doubleFacts(m[0],data).target==='unknown')))warnings.push('Parting Shot: a documentação menciona os alvos afetados, mas não confirma o alcance em duplas. Nenhum bônus de área foi aplicado.');
  if(!team.every(p=>quickStats(p,data)))warnings.push('Há atributos base não verificados; eles não foram usados nos desempates afetados.');
  const position=allies.length===2?doublePosition(all,allySlots.map(n=>team.find(p=>p.name===n)),opponents,analysisData):null;
