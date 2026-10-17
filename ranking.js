@@ -146,10 +146,23 @@ function individualActionRanking(types,currentName,team,data,fakeOutAvailable=nu
  }
  return {actions:[...attackActions,...switches,...tactical],recommended,recommendationReason,fakeOutRelevant:current.name==='Torracat'&&!ghost&&current.moves.some(([n])=>n==='Fake Out')};
 }
+function dreamstoneGyaradosFormAdvice(types,data){
+ const forms=data.megaForms?.Gyarados;if(!forms)return '';
+ const normal={types:forms.normal.types,ability:forms.normal.ability},mega={types:forms.mega.types,ability:forms.mega.ability};
+ const normalRisk=Math.max(...types.map(t=>damageTaken(t,normal))),megaRisk=Math.max(...types.map(t=>damageTaken(t,mega)),0),label=types.map(t=>TYPES[t]).join(' / ');
+ const risk=normalRisk>megaRisk?'Pelos tipos selecionados, maior exposição cai de '+quickFactor(normalRisk)+' para '+quickFactor(megaRisk)+'.':megaRisk>normalRisk?'Pelos tipos selecionados, maior exposição sobe de '+quickFactor(normalRisk)+' para '+quickFactor(megaRisk)+'.':'Pelos tipos selecionados, a maior exposição fica igual ('+quickFactor(normalRisk)+').';
+ let decision;
+ if(types.includes('ground'))decision='MANTER NORMAL POR ENQUANTO: Gyarados normal é imune a Terra pelo tipo Voador; Mega Gyarados perde essa imunidade.';
+ else if(megaRisk<normalRisk)decision='MEGA FAVORECIDA PELOS TIPOS SELECIONADOS: a forma Água/Sombrio reduz a maior exposição considerada.';
+ else if(megaRisk>normalRisk)decision='MANTER A FORMA NORMAL PELOS TIPOS SELECIONADOS: a Mega aumenta a maior exposição considerada.';
+ else decision='SEM VANTAGEM DEFENSIVA CLARA: a decisão depende da pressão ofensiva e do valor de Intimidate.';
+ return {decision,text:'Mega Gyarados — '+decision+' '+risk+' '+(label?'Comparação apenas contra tipos selecionados ('+label+'); isso não confirma quais golpes o adversário conhece ou usará. ':'')+'A Mega ganha +30 Ataque, +30 Defesa, +10 Ataque Especial e +30 Defesa Especial; Velocidade e HP base não mudam. Água/Sombrio dá STAB a Crunch; Mold Breaker substitui Intimidate e pode ignorar certas habilidades adversárias, se relevantes. A forma normal mantém Intimidate e imunidade a Terra. Gyaradosite está confirmada e registrada como item segurado no lugar de Life Orb. Bases são da ROM; não se estima dano, KO, ação adversária ou valor de Intimidate sem dados físicos/especiais.'};
+}
 function dreamstoneIndividualActionRanking(types,currentName,team,data){
  if(!currentName||!Array.isArray(types)||!types.length||types.length>2)return {actions:[],recommended:[],fakeOutRelevant:false};
  const current=team.find(p=>p.name===currentName);if(!current)return {actions:[],recommended:[],fakeOutRelevant:false};
  const currentRisk=Math.max(...types.map(t=>damageTaken(t,current)));
+ const megaAdvice=current.name==='Gyarados'?dreamstoneGyaradosFormAdvice(types,data):'';
  const attacks=current.moves.map(([name,type])=>({name,type,facts:data.confirmedMoveFacts?.[name]||{}})).filter(m=>m.type&&['physical','special'].includes(m.facts.category)).map(m=>{
   const multiplier=effectiveness(m.type,types),stab=current.types.includes(m.type),priority=m.facts.priority||0,accuracy=m.facts.accuracy;
   const effects=[m.facts.criticalHitStage?'alta chance de crítico':null,m.facts.effectChance||null].filter(Boolean).join('; ');
@@ -169,6 +182,6 @@ function dreamstoneIndividualActionRanking(types,currentName,team,data){
  if(tactical.length&&recommended.length<3){const options=tactical.filter(a=>!recommended.some(r=>r.key===a.key)).slice(0,3-recommended.length);recommended.push(...options);if(options.length)recommendationReason+=(recommendationReason?' ':'')+'Suporte, setup, cura e reposicionamento são alternativas condicionais; confira a situação indicada em cada opção.';}
  if(!recommended.length&&tactical.length){recommended.push(...tactical.slice(0,3));recommendationReason='Não há golpe de dano confirmado; estas opções de suporte dependem das condições indicadas.';}
  const actions=[...attackActions,...switches,...tactical];
- return {actions,recommended:recommended.slice(0,3),recommendationReason,fakeOutRelevant:false};
+ return {actions,recommended:recommended.slice(0,3),recommendationReason,fakeOutRelevant:false,megaAdvice};
 }
-if(typeof module!=='undefined')module.exports={quickRanking,quickAttacks,quickReason,quickCompareKeys,quickBulkLayers,staySwitchAdvice,individualActionRanking};
+if(typeof module!=='undefined')module.exports={quickRanking,quickAttacks,quickReason,quickCompareKeys,quickBulkLayers,staySwitchAdvice,individualActionRanking,dreamstoneGyaradosFormAdvice};
