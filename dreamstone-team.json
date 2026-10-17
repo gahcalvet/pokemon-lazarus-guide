@@ -59,22 +59,23 @@
       ]
     },
     {
-      "name": "Quilava",
+      "name": "Typhlosion de Hisui",
       "types": [
-        "fire"
+        "fire",
+        "ghost"
       ],
-      "level": 34,
+      "level": null,
       "nature": "Timid",
       "ability": "Blaze",
       "item": "Charcoal",
       "moves": [
         [
-          "Leer",
-          "normal"
+          "Hex",
+          "ghost"
         ],
         [
-          "Smokescreen",
-          "normal"
+          "Infernal Parade",
+          "ghost"
         ],
         [
           "Flame Wheel",
@@ -84,7 +85,8 @@
           "Quick Attack",
           "normal"
         ]
-      ]
+      ],
+      "levelNote": "Último nível informado antes da evolução: 34; nível atual pendente de confirmação."
     },
     {
       "name": "Gardevoir",
@@ -98,7 +100,7 @@
       "item": "Wise Glasses",
       "moves": [
         [
-          "Hypnosis",
+          "Calm Mind",
           "psychic"
         ],
         [
@@ -174,7 +176,7 @@
       ]
     }
   ],
-  "version": "Current party and progress confirmed by player on 2026-10-17; Mega Ring and Gyaradosite confirmed by player on 2026-10-17",
+  "version": "Current party and progress confirmed by player on 2026-10-17; Typhlosion de Hisui evolution and Gardevoir moves updated by player on 2026-10-17",
   "progress": {
     "location": "Pelluca City",
     "gym": "Not yet challenged",
