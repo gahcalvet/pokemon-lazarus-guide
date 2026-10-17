@@ -252,7 +252,7 @@ function doubleTurnPlan(position,opponents,data){
    if(f.name==='Toxic')notes.push(`${p.name}: Toxic tenta envenenar gravemente um adversário, mas não causa dano imediato e depende de acerto e imunidades.`);
    if(f.name==='Hypnosis')notes.push(`${p.name}: Hypnosis tem 60% de precisão contra um alvo selecionado; sono e imunidades do alvo não são conhecidos.`);
    if(f.name==='Thunder Wave')notes.push(`${p.name}: Thunder Wave tem 90% de precisão contra um alvo selecionado; não afeta Terra e não causa dano.`);
-   if(f.name==='Hex'||f.name==='Infernal Parade')notes.push(`${p.name}: ${f.name} dobra o poder se o alvo tiver um problema de status; estado do alvo e ordem de ação são desconhecidos, então o ranking usa poder-base. Infernal Parade também tem 30% de chance de queimar.`);
+   if(f.name==='Hex'||f.name==='Infernal Parade')notes.push(`${p.name}: ${f.name} dobra o poder se o alvo tiver um problema de status; estado do alvo e ordem de ação são desconhecidos, então o ranking usa poder-base.${f.name==='Infernal Parade'?' Infernal Parade também tem 30% de chance de queimar.':''}`);
   });
  });
  return {pattern:position.pattern,actions,swaps,future:null,notes,fakeOut};
