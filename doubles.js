@@ -236,6 +236,7 @@ function doubleTurnPlan(position,opponents,data){
   }
  }
  const notes=[];
+ if(selected.slots.some((p,i)=>p.name==='Gyarados'&&!selected.changed[i])){const formAdvice=dreamstoneGyaradosFormAdvice(doubleTypeSets(opponents).flat(),data);if(formAdvice)notes.push(formAdvice.text);}
  selected.slots.forEach((p,i)=>{
   if(selected.changed[i])return;
   const facts=p.moves.map(([name])=>({name,...doubleFacts(name,data)}));
