@@ -60,6 +60,7 @@ function doublePositionHTML(position,opponents,data){
 }
 function renderDoubles(){
  const output=document.querySelector('#doubles-results'),prompt=document.querySelector('#doubles-prompt');
+ if(activeGame==='dreamstone'){output.hidden=true;prompt.hidden=false;prompt.textContent='Análise de duplas Dreamstone indisponível: os tipos, efeitos dos golpes e regras deste ROM ainda não foram confirmados. Os Pokémon selecionados abaixo vêm do perfil Dreamstone; nenhum cálculo ou dado de Lazarus é reutilizado.';return}
  if(!team.length){output.hidden=true;prompt.textContent='Carregando a equipe confirmada…';return}
  if(battleData.unavailable){output.hidden=true;prompt.textContent='Os dados de batalha não carregaram. O guia individual continua disponível.';return}
  const result=doubleAnalyze(doublesState.opponents,team,battleData,doublesState.allies);
@@ -75,6 +76,7 @@ function renderDoubles(){
 }
 function initDoubles(){
  const typeOptions=Object.entries(TYPES),allyOptions=team.map(p=>[p.name,p.name]);
+ doublesState.alliesByGame={lazarus:doublesState.allies.slice(),dreamstone:['','']};
  [0,1].forEach(i=>{
   const opponent=document.querySelector(`#enemy-${i}-0`),secondary=document.querySelector(`#enemy-${i}-1`),ally=document.querySelector(`#ally-${i}`);
   opponent.innerHTML=doubleSelectOptions(typeOptions,'Tipo principal');secondary.innerHTML=doubleSelectOptions(typeOptions,'Segundo tipo (opcional)');
@@ -82,7 +84,7 @@ function initDoubles(){
   opponent.value=doublesState.opponents[i][0];secondary.value=doublesState.opponents[i][1];ally.value=doublesState.allies[i];
   const updateOpponent=()=>{if(opponent.value&&opponent.value===secondary.value)secondary.value='';doublesState.opponents[i]=[opponent.value,secondary.value];secondary.innerHTML=doubleSelectOptions(typeOptions,'Segundo tipo (opcional)',opponent.value);secondary.value=doublesState.opponents[i][1];opponent.innerHTML=doubleSelectOptions(typeOptions,'Tipo principal',secondary.value);opponent.value=doublesState.opponents[i][0];renderDoubles()};
   opponent.addEventListener('change',updateOpponent);secondary.addEventListener('change',updateOpponent);
-  ally.addEventListener('change',()=>{doublesState.allies[i]=ally.value;[0,1].forEach(j=>{const select=document.querySelector(`#ally-${j}`);select.innerHTML=doubleSelectOptions(allyOptions,'Não informado',doublesState.allies[1-j]);select.value=doublesState.allies[j]});renderDoubles()});
+  ally.addEventListener('change',()=>{doublesState.allies[i]=ally.value;doublesState.alliesByGame[activeGame]=doublesState.allies.slice();const options=(activeGame==='dreamstone'?dreamstoneTeam:team).map(p=>[p.name,p.name]);[0,1].forEach(j=>{const select=document.querySelector(`#ally-${j}`);select.innerHTML=doubleSelectOptions(options,'Não informado',doublesState.allies[1-j]);select.value=doublesState.allies[j]});renderDoubles()});
  });
  document.querySelector('#doubles-criterion').addEventListener('change',e=>{doublesState.criterion=e.target.value;renderDoubles()});
  document.querySelectorAll('[data-battle-mode]').forEach(button=>button.addEventListener('click',()=>{
@@ -93,3 +95,11 @@ function initDoubles(){
  }));
  renderDoubles();
 }
+function setDoublesRoster(roster,game){
+ if(!document.querySelector('#ally-0'))return;
+ doublesState.alliesByGame=doublesState.alliesByGame||{lazarus:['',''],dreamstone:['','']};
+ doublesState.allies=doublesState.alliesByGame[game].slice();
+ const options=roster.map(p=>[p.name,p.name]);
+ [0,1].forEach(i=>{const select=document.querySelector(`#ally-${i}`);select.innerHTML=doubleSelectOptions(options,'Não informado',doublesState.allies[1-i]);select.value=doublesState.allies[i]});
+}
+
