@@ -1,6 +1,6 @@
 {
   "game": "Pokémon Dreamstone Mysteries",
-  "version": "Final release · tag release · source commit edd19c8; player team/progress/Mega item and roster update 2026-10-17",
+  "version": "Final release · tag release · source commit edd19c8; Dreamstone team and movesets confirmed by player on 2026-10-17",
   "typeChart": "types_info.h at B_UPDATED_TYPE_MATCHUPS = GEN_LATEST; standard 18-type matchups (updates through Gen VI)",
   "dataSource": "https://github.com/dsmyst/dreamstone-mysteries/tree/release",
   "pressureComparable": true,
@@ -54,6 +54,14 @@
       "def": 78,
       "spa": 119,
       "spd": 85,
+      "spe": 95
+    },
+    "Obstagoon": {
+      "hp": 93,
+      "atk": 90,
+      "def": 101,
+      "spa": 60,
+      "spd": 81,
       "spe": 95
     }
   },
@@ -430,6 +438,196 @@
       "role": "setup",
       "target": "self",
       "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Dragon Dance": {
+      "type": "dragon",
+      "category": "status",
+      "power": 0,
+      "accuracy": null,
+      "accuracyMode": "not-applicable",
+      "pp": 20,
+      "priority": 0,
+      "statChanges": {
+        "target": "user",
+        "attack": 1,
+        "speed": 1
+      },
+      "effect": "Aumenta o Ataque e a Velocidade do usuário em 1 estágio cada.",
+      "role": "setup",
+      "target": "self",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Earthquake": {
+      "type": "ground",
+      "category": "physical",
+      "power": 100,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 10,
+      "priority": 0,
+      "effect": "Causa dano físico aos adversários e também ao parceiro em duplas; Pokémon Voador são imunes.",
+      "target": "all-others",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Will-O-Wisp": {
+      "type": "fire",
+      "category": "status",
+      "power": 0,
+      "accuracy": 85,
+      "accuracyMode": "check",
+      "pp": 15,
+      "priority": 0,
+      "effect": "Tenta queimar o adversário selecionado; o efeito ocorre se acertar.",
+      "role": "status",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Flamethrower": {
+      "type": "fire",
+      "category": "special",
+      "power": 90,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 15,
+      "priority": 0,
+      "effect": "Causa dano especial e pode queimar o alvo.",
+      "effectChance": "10% de chance de queimar.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Focus Blast": {
+      "type": "fighting",
+      "category": "special",
+      "power": 120,
+      "accuracy": 70,
+      "accuracyMode": "check",
+      "pp": 5,
+      "priority": 0,
+      "effect": "Causa dano especial e pode reduzir a Defesa Especial do alvo em 1 estágio.",
+      "effectChance": "10% de chance de reduzir a Defesa Especial.",
+      "statChanges": {
+        "target": "opponent",
+        "specialDefense": -1
+      },
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Psychic": {
+      "type": "psychic",
+      "category": "special",
+      "power": 90,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 10,
+      "priority": 0,
+      "effect": "Causa dano especial e pode reduzir a Defesa Especial do alvo em 1 estágio.",
+      "effectChance": "10% de chance de reduzir a Defesa Especial.",
+      "statChanges": {
+        "target": "opponent",
+        "specialDefense": -1
+      },
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Facade": {
+      "type": "normal",
+      "category": "physical",
+      "power": 70,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 20,
+      "priority": 0,
+      "conditionalEffect": "Dobra o poder quando o usuário está queimado, paralisado ou envenenado; Guts também aumenta o Ataque enquanto o usuário sofre status.",
+      "effect": "Causa dano físico; dobra o poder quando o usuário está queimado, paralisado ou envenenado.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Knock Off": {
+      "type": "dark",
+      "category": "physical",
+      "power": 65,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 20,
+      "priority": 0,
+      "conditionalEffect": "O poder aumenta em 50% se o alvo tiver um item removível; o item adversário é desconhecido, então esse bônus não foi aplicado.",
+      "effect": "Causa dano físico e tenta remover o item segurado do alvo.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Close Combat": {
+      "type": "fighting",
+      "category": "physical",
+      "power": 120,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 5,
+      "priority": 0,
+      "effect": "Causa dano físico e reduz a Defesa e a Defesa Especial do usuário em 1 estágio cada.",
+      "statChanges": {
+        "target": "user",
+        "defense": -1,
+        "specialDefense": -1
+      },
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Parting Shot": {
+      "type": "dark",
+      "category": "status",
+      "power": 0,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 20,
+      "priority": 0,
+      "effect": "Reduz o Ataque e o Ataque Especial do adversário selecionado em 1 estágio cada e depois troca o usuário, se funcionar.",
+      "statChanges": {
+        "target": "opponent",
+        "attack": -1,
+        "specialAttack": -1
+      },
+      "role": "pivot",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Scald": {
+      "type": "water",
+      "category": "special",
+      "power": 80,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 15,
+      "priority": 0,
+      "effect": "Causa dano especial e pode queimar o alvo.",
+      "effectChance": "30% de chance de queimar.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Ice Beam": {
+      "type": "ice",
+      "category": "special",
+      "power": 90,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 10,
+      "priority": 0,
+      "effect": "Causa dano especial e pode congelar o alvo. Dreamstone está com Frostbite desativado.",
+      "effectChance": "10% de chance de congelar.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
+    },
+    "Volt Switch": {
+      "type": "electric",
+      "category": "special",
+      "power": 70,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 20,
+      "priority": 0,
+      "effect": "Causa dano especial ao alvo selecionado e permite que o usuário troque depois do golpe, se acertar.",
+      "role": "pivot",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release (tag release, source commit edd19c8): src/data/moves_info.h"
     }
   },
   "doublesMechanics": {
@@ -523,6 +721,49 @@
     "Calm Mind": {
       "target": "self",
       "role": "setup"
+    },
+    "Dragon Dance": {
+      "target": "self",
+      "role": "setup"
+    },
+    "Earthquake": {
+      "target": "all-others"
+    },
+    "Will-O-Wisp": {
+      "target": "selected-opponent",
+      "role": "status"
+    },
+    "Flamethrower": {
+      "target": "selected-opponent"
+    },
+    "Focus Blast": {
+      "target": "selected-opponent"
+    },
+    "Psychic": {
+      "target": "selected-opponent"
+    },
+    "Facade": {
+      "target": "selected-opponent"
+    },
+    "Knock Off": {
+      "target": "selected-opponent"
+    },
+    "Close Combat": {
+      "target": "selected-opponent"
+    },
+    "Parting Shot": {
+      "target": "selected-opponent",
+      "role": "pivot"
+    },
+    "Scald": {
+      "target": "selected-opponent"
+    },
+    "Ice Beam": {
+      "target": "selected-opponent"
+    },
+    "Volt Switch": {
+      "target": "selected-opponent",
+      "role": "pivot"
     }
   },
   "abilityNotes": {
@@ -532,7 +773,8 @@
     "Trace": "Copia uma habilidade adversária ao entrar; a habilidade copiada depende do oponente.",
     "Volt Absorb": "Anula golpes Elétricos afetados e pode recuperar 1/4 do HP máximo.",
     "Gluttony": "Altera o limiar de ativação de Berries; o item atual de Linoone é Life Orb, que não é Berry, então nenhum efeito do item é presumido.",
-    "Mold Breaker": "Golpes do usuário ignoram certas habilidades do alvo; o efeito só importa quando uma habilidade relevante estiver confirmada."
+    "Mold Breaker": "Golpes do usuário ignoram certas habilidades do alvo; o efeito só importa quando uma habilidade relevante estiver confirmada.",
+    "Guts": "Aumenta em 50% o Ataque físico enquanto o usuário tem um problema de status. Facade também dobra o poder sob queimadura, paralisia ou envenenamento. O status atual não foi informado; nenhum bônus foi aplicado."
   },
   "dataSourceFiles": [
     "include/config/battle.h",
@@ -547,7 +789,11 @@
     "Life Orb": "Item confirmado; multiplicador de dano/recuo não é aplicado ao ranking estrutural.",
     "Leftovers": "Item confirmado; recuperação passiva por turno não é aplicada ao ranking estrutural.",
     "Charcoal": "Item confirmado; bônus de dano não é aplicado ao ranking estrutural.",
-    "Wise Glasses": "Item confirmado; bônus de dano não é aplicado ao ranking estrutural.",
+    "Wise Glasses": {
+      "note": "Aumenta em 10% o poder de golpes especiais; aplicado ao ranqueamento estrutural quando este item está equipado.",
+      "specialMovePowerMultiplier": 1.1,
+      "source": "ROM Dreamstone Mysteries release: src/data/items.h (holdEffectParam 10) and src/battle_util.c (HOLD_EFFECT_WISE_GLASSES)"
+    },
     "Gyaradosite": "Mega stone de Gyarados confirmada pelo jogador; precisa estar segurada para Mega Evoluir e substitui Life Orb. Nenhum bônus de Life Orb é mantido."
   },
   "megaForms": {
@@ -598,5 +844,13 @@
       ],
       "caveat": "Bases and form/item mapping are ROM-confirmed. Actual battle HP, EVs, nature effects, opposing moves, ability and damage are not simulated."
     }
-  }
+  },
+  "sourceNotes": [
+    "Dados extraídos da versão release da ROM, source commit edd19c8: src/data/moves_info.h, src/data/items.h, src/data/pokemon/species_info/gen_3_families.h, include/config/battle.h e src/battle_util.c.",
+    "B_UPDATED_MOVE_DATA está definido como GEN_LATEST; portanto Flamethrower e Ice Beam usam 90 de poder, Will-O-Wisp 85 de precisão e Knock Off 65 de poder. B_USE_FROSTBITE está FALSE; Ice Beam pode congelar.",
+    "Wise Glasses aplica 1,1× ao poder especial no ranqueamento estrutural. Isso não é uma simulação de dano final.",
+    "Guts e Facade só recebem seus bônus condicionais se o estado de status correspondente estiver ativo. O site não presume o estado atual do usuário nem do alvo.",
+    "Os golpes vieram do modificador de golpes indicado pelo jogador; disponibilidade por aprendizado natural não foi checada nem exigida.",
+    "Earthquake e Discharge usam alvo all-others em duplas e podem atingir o parceiro. Parting Shot e Volt Switch miram um adversário selecionado; nenhum efeito em ambos os adversários é presumido."
+  ]
 }

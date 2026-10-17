@@ -13,20 +13,20 @@
       "item": "Gyaradosite",
       "moves": [
         [
-          "Rain Dance",
-          "water"
+          "Dragon Dance",
+          "dragon"
         ],
         [
-          "Tackle",
-          "normal"
+          "Waterfall",
+          "water"
         ],
         [
           "Crunch",
           "dark"
         ],
         [
-          "Waterfall",
-          "water"
+          "Earthquake",
+          "ground"
         ]
       ]
     },
@@ -45,11 +45,11 @@
           "grass"
         ],
         [
-          "Synthesis",
+          "Giga Drain",
           "grass"
         ],
         [
-          "Giga Drain",
+          "Synthesis",
           "grass"
         ],
         [
@@ -67,23 +67,23 @@
       "level": null,
       "nature": "Timid",
       "ability": "Blaze",
-      "item": "Charcoal",
+      "item": "Wise Glasses",
       "moves": [
         [
           "Hex",
           "ghost"
         ],
         [
-          "Infernal Parade",
-          "ghost"
-        ],
-        [
-          "Flame Wheel",
+          "Will-O-Wisp",
           "fire"
         ],
         [
-          "Quick Attack",
-          "normal"
+          "Flamethrower",
+          "fire"
+        ],
+        [
+          "Focus Blast",
+          "fighting"
         ]
       ],
       "levelNote": "Último nível informado antes da evolução: 34; nível atual pendente de confirmação."
@@ -108,12 +108,12 @@
           "fairy"
         ],
         [
-          "Dazzling Gleam",
-          "fairy"
+          "Psychic",
+          "psychic"
         ],
         [
-          "Psybeam",
-          "psychic"
+          "Focus Blast",
+          "fighting"
         ]
       ]
     },
@@ -129,62 +129,60 @@
       "item": "Leftovers",
       "moves": [
         [
-          "Thunder Wave",
+          "Discharge",
           "electric"
         ],
         [
-          "Bubble Beam",
+          "Scald",
           "water"
         ],
         [
-          "Charge",
-          "electric"
+          "Ice Beam",
+          "ice"
         ],
         [
-          "Discharge",
+          "Volt Switch",
           "electric"
         ]
       ]
     },
     {
-      "name": "Linoone",
+      "name": "Obstagoon",
       "types": [
         "dark",
         "normal"
       ],
       "level": 35,
       "nature": "Jolly",
-      "ability": "Gluttony",
+      "ability": "Guts",
       "item": "Life Orb",
       "moves": [
         [
-          "Headbutt",
+          "Facade",
           "normal"
         ],
         [
-          "Night Slash",
+          "Knock Off",
           "dark"
         ],
         [
-          "Pin Missile",
-          "bug"
+          "Close Combat",
+          "fighting"
         ],
         [
-          "Lick",
-          "ghost"
+          "Parting Shot",
+          "dark"
         ]
-      ]
+      ],
+      "abilityNote": "Guts aumenta em 50% o Ataque físico enquanto o usuário tem um problema de status. Facade também dobra o poder sob queimadura, paralisia ou envenenamento. O status atual não foi informado; nenhum bônus foi aplicado."
     }
   ],
-  "version": "Current party and progress confirmed by player on 2026-10-17; Typhlosion de Hisui evolution and Gardevoir moves updated by player on 2026-10-17",
+  "version": "Current Dreamstone team and movesets confirmed by player on 2026-10-17; Obstagoon replaced the previous Linoone slot; Typhlosion item updated to Wise Glasses",
   "progress": {
     "location": "Pelluca City",
     "gym": "Not yet challenged",
     "quest": "Mayor’s quest accepted",
     "source": "Player-confirmed on 2026-10-17"
-  },
-  "typeNotes": {
-    "Linoone": "Dark/Normal conforme à confirmação anterior do jogador; a espécie padrão no código da ROM é Normal, portanto a forma/tipagem dessa captura não foi reconciliada com o registro do jogador."
   },
   "megaEvolution": {
     "megaRing": "confirmed",
@@ -196,5 +194,6 @@
       "source": "Player confirmed 2026-10-17"
     },
     "note": "Mega Evolution is situational; the site compares the normal and Mega forms by selected opponent types and ROM-confirmed form data."
-  }
+  },
+  "movesetSource": "All four listed moves per Pokémon are equipped via the in-game move modifier, confirmed by the player on 2026-10-17; they are recorded as equipped without requiring natural level-up or TM learnsets."
 }
