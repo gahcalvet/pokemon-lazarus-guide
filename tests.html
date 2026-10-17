@@ -1,7 +1,7 @@
 <!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes · Guia de batalha</title><style>body{background:#111418;color:#d4ece0;font:15px monospace;padding:30px}pre{white-space:pre-wrap}</style><h1>Verificação dos perfis e matchups</h1><pre id="result">Executando verificações dos dois perfis…</pre><h2>Regressões Dreamstone</h2><pre id="dreamstone-result">Executando…</pre>
-<script src="types.js?v=6"></script><script src="ranking.js?v=16"></script><script src="doubles.js?v=15"></script><script src="dreamstone-tests.js?v=4"></script>
+<script src="types.js?v=6"></script><script src="ranking.js?v=17"></script><script src="doubles.js?v=18"></script><script src="dreamstone-tests.js?v=5"></script>
 <script>
-Promise.all([fetch('team.json?v=12').then(r=>r.json()),fetch('battle-data.json?v=12').then(r=>r.json()),fetch('dreamstone-team.json?v=5').then(r=>r.json()),fetch('dreamstone-battle-data.json?v=3').then(r=>r.json())]).then(([lazarus,battleData,dreamstone,dreamstoneData])=>{
+Promise.all([fetch('team.json?v=12').then(r=>r.json()),fetch('battle-data.json?v=12').then(r=>r.json()),fetch('dreamstone-team.json?v=6').then(r=>r.json()),fetch('dreamstone-battle-data.json?v=4').then(r=>r.json())]).then(([lazarus,battleData,dreamstone,dreamstoneData])=>{
  Object.assign(dreamstone.team,{progress:dreamstone.progress,typeNotes:dreamstone.typeNotes,megaEvolution:dreamstone.megaEvolution});
  const tests=[],check=(name,fn)=>{if(!fn())throw Error(name);tests.push('✓ '+name)};
  try{
