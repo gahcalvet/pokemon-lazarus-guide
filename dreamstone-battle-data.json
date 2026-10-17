@@ -1,6 +1,6 @@
 {
   "game": "Pokémon Dreamstone Mysteries",
-  "version": "Final release · tag release · source commit edd19c8; player team/progress updated 2026-10-17",
+  "version": "Final release · tag release · source commit edd19c8; player team/progress/Mega item updated 2026-10-17",
   "typeChart": "types_info.h at B_UPDATED_TYPE_MATCHUPS = GEN_LATEST; standard 18-type matchups (updates through Gen VI)",
   "dataSource": "https://github.com/dsmyst/dreamstone-mysteries/tree/release",
   "pressureComparable": true,
@@ -476,7 +476,8 @@
     "Blaze": "Pode fortalecer golpes de Fogo quando o HP está baixo; HP atual desconhecido, bônus não presumido.",
     "Trace": "Copia uma habilidade adversária ao entrar; a habilidade copiada depende do oponente.",
     "Volt Absorb": "Anula golpes Elétricos afetados e pode recuperar 1/4 do HP máximo.",
-    "Gluttony": "Altera o limiar de ativação de Berries; o item atual de Linoone é Life Orb, que não é Berry, então nenhum efeito do item é presumido."
+    "Gluttony": "Altera o limiar de ativação de Berries; o item atual de Linoone é Life Orb, que não é Berry, então nenhum efeito do item é presumido.",
+    "Mold Breaker": "Golpes do usuário ignoram certas habilidades do alvo; o efeito só importa quando uma habilidade relevante estiver confirmada."
   },
   "dataSourceFiles": [
     "include/config/battle.h",
@@ -484,12 +485,63 @@
     "src/data/pokemon/species_info/gen_1_families.h",
     "src/data/pokemon/species_info/gen_2_families.h",
     "src/data/pokemon/species_info/gen_3_families.h",
-    "src/data/moves_info.h"
+    "src/data/moves_info.h",
+    "src/data/pokemon/form_change_tables.h"
   ],
   "itemNotes": {
     "Life Orb": "Item confirmado; multiplicador de dano/recuo não é aplicado ao ranking estrutural.",
     "Leftovers": "Item confirmado; recuperação passiva por turno não é aplicada ao ranking estrutural.",
     "Charcoal": "Item confirmado; bônus de dano não é aplicado ao ranking estrutural.",
-    "Wise Glasses": "Item confirmado; bônus de dano não é aplicado ao ranking estrutural."
+    "Wise Glasses": "Item confirmado; bônus de dano não é aplicado ao ranking estrutural.",
+    "Gyaradosite": "Mega stone de Gyarados confirmada pelo jogador; precisa estar segurada para Mega Evoluir e substitui Life Orb. Nenhum bônus de Life Orb é mantido."
+  },
+  "megaForms": {
+    "Gyarados": {
+      "normal": {
+        "types": [
+          "water",
+          "flying"
+        ],
+        "ability": "Intimidate",
+        "stats": {
+          "hp": 95,
+          "atk": 125,
+          "def": 79,
+          "spa": 60,
+          "spd": 100,
+          "spe": 81
+        }
+      },
+      "mega": {
+        "types": [
+          "water",
+          "dark"
+        ],
+        "ability": "Mold Breaker",
+        "stats": {
+          "hp": 95,
+          "atk": 155,
+          "def": 109,
+          "spa": 70,
+          "spd": 130,
+          "spe": 81
+        },
+        "item": "Gyaradosite"
+      },
+      "changes": {
+        "atk": 30,
+        "def": 30,
+        "spa": 10,
+        "spd": 30,
+        "spe": 0,
+        "hp": 0
+      },
+      "formChange": "Battle Mega Evolution item: Gyaradosite",
+      "sources": [
+        "src/data/pokemon/species_info/gen_1_families.h",
+        "src/data/pokemon/form_change_tables.h"
+      ],
+      "caveat": "Bases and form/item mapping are ROM-confirmed. Actual battle HP, EVs, nature effects, opposing moves, ability and damage are not simulated."
+    }
   }
 }
