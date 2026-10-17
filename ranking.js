@@ -154,6 +154,7 @@ function dreamstoneGyaradosFormAdvice(types,data){
  let decision;
  if(types.includes('ground'))decision='MANTER NORMAL POR ENQUANTO: Gyarados normal é imune a Terra pelo tipo Voador; Mega Gyarados perde essa imunidade.';
  else if(megaRisk<normalRisk)decision='MEGA FAVORECIDA PELOS TIPOS SELECIONADOS: a forma Água/Sombrio reduz a maior exposição considerada.';
+ else if(megaRisk===normalRisk&&effectiveness('dark',types)>1)decision='MEGA FAVORECIDA OFENSIVAMENTE: Crunch passa a ter STAB e é super efetivo contra o tipo selecionado, além do Ataque base maior.';
  else if(megaRisk>normalRisk)decision='MANTER A FORMA NORMAL PELOS TIPOS SELECIONADOS: a Mega aumenta a maior exposição considerada.';
  else decision='SEM VANTAGEM DEFENSIVA CLARA: a decisão depende da pressão ofensiva e do valor de Intimidate.';
  return {decision,text:'Mega Gyarados — '+decision+' '+risk+' '+(label?'Comparação apenas contra tipos selecionados ('+label+'); isso não confirma quais golpes o adversário conhece ou usará. ':'')+'A Mega ganha +30 Ataque, +30 Defesa, +10 Ataque Especial e +30 Defesa Especial; Velocidade e HP base não mudam. Água/Sombrio dá STAB a Crunch; Mold Breaker substitui Intimidate e pode ignorar certas habilidades adversárias, se relevantes. A forma normal mantém Intimidate e imunidade a Terra. Gyaradosite está confirmada e registrada como item segurado no lugar de Life Orb. Bases são da ROM; não se estima dano, KO, ação adversária ou valor de Intimidate sem dados físicos/especiais.'};
