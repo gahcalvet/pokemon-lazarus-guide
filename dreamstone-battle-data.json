@@ -1,6 +1,6 @@
 {
   "game": "Pokémon Dreamstone Mysteries",
-  "version": "Final release · tag release · source commit edd19c8; player team/progress/Mega item updated 2026-10-17",
+  "version": "Final release · tag release · source commit edd19c8; player team/progress/Mega item and roster update 2026-10-17",
   "typeChart": "types_info.h at B_UPDATED_TYPE_MATCHUPS = GEN_LATEST; standard 18-type matchups (updates through Gen VI)",
   "dataSource": "https://github.com/dsmyst/dreamstone-mysteries/tree/release",
   "pressureComparable": true,
@@ -22,14 +22,6 @@
       "def": 100,
       "spa": 83,
       "spd": 100,
-      "spe": 80
-    },
-    "Quilava": {
-      "hp": 58,
-      "atk": 64,
-      "def": 58,
-      "spa": 80,
-      "spd": 65,
       "spe": 80
     },
     "Gardevoir": {
@@ -55,6 +47,14 @@
       "spa": 50,
       "spd": 61,
       "spe": 100
+    },
+    "Typhlosion de Hisui": {
+      "hp": 73,
+      "atk": 84,
+      "def": 78,
+      "spa": 119,
+      "spd": 85,
+      "spe": 95
     }
   },
   "confirmedMoveFacts": {
@@ -385,6 +385,51 @@
       "effectChance": "30% de chance de paralisar.",
       "target": "all-others",
       "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Hex": {
+      "type": "ghost",
+      "category": "special",
+      "power": 65,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 10,
+      "priority": 0,
+      "conditionalEffect": "Dobra o dano se o alvo tiver algum problema de status.",
+      "effect": "Causa dano especial; o dano dobra se o alvo tiver algum problema de status.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Infernal Parade": {
+      "type": "ghost",
+      "category": "special",
+      "power": 60,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 15,
+      "priority": 0,
+      "conditionalEffect": "Dobra o dano se o alvo tiver algum problema de status.",
+      "effect": "Causa dano especial; o dano dobra se o alvo tiver algum problema de status.",
+      "effectChance": "30% de chance de queimar o alvo.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Calm Mind": {
+      "type": "psychic",
+      "category": "status",
+      "power": 0,
+      "accuracy": null,
+      "accuracyMode": "not-applicable",
+      "pp": 20,
+      "priority": 0,
+      "effect": "Aumenta o Ataque Especial e a Defesa Especial do usuário em 1 estágio.",
+      "statChanges": {
+        "target": "user",
+        "specialAttack": 1,
+        "specialDefense": 1
+      },
+      "role": "setup",
+      "target": "self",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
     }
   },
   "doublesMechanics": {
@@ -468,6 +513,16 @@
     },
     "Lick": {
       "target": "selected-opponent"
+    },
+    "Hex": {
+      "target": "selected-opponent"
+    },
+    "Infernal Parade": {
+      "target": "selected-opponent"
+    },
+    "Calm Mind": {
+      "target": "self",
+      "role": "setup"
     }
   },
   "abilityNotes": {
