@@ -23,7 +23,7 @@ const CHART = {
 function effectiveness(attack,defenders){return defenders.reduce((n,t)=>n*(CHART[attack]?.[t]??1),1)}
 function defensiveEffectiveness(attack,pokemon){return (attack==='water'&&pokemon.ability==='Water Absorb')||(attack==='electric'&&pokemon.ability==='Volt Absorb')?0:effectiveness(attack,pokemon.types)}
 function damageTaken(attack,pokemon){const n=defensiveEffectiveness(attack,pokemon);return n>1&&pokemon.ability==='Solid Rock'?n*.75:n}
-function offensiveOptionsAgainst(defenders,team){return team.flatMap(p=>p.moves.filter(m=>m[1]&&effectiveness(m[1],defenders)>1).map(m=>({pokemon:p.name,move:m[0],type:m[1],multiplier:effectiveness(m[1],defenders)})))}
-function offensiveOptions(type,team){return offensiveOptionsAgainst([type],team)}
+function offensiveOptionsAgainst(defenders,team,data=null){const facts=data||(typeof battleData!=='undefined'?battleData:null);return team.flatMap(p=>p.moves.filter(m=>m[1]&&facts?.confirmedMoveFacts?.[m[0]]?.category!=='status'&&effectiveness(m[1],defenders)>1).map(m=>({pokemon:p.name,move:m[0],type:m[1],multiplier:effectiveness(m[1],defenders)})))}
+function offensiveOptions(type,team,data=null){return offensiveOptionsAgainst([type],team,data)}
 function toggleTypeSelection(current,type){if(type==='all')return [];if(current.includes(type))return current.filter(t=>t!==type);return current.length<2?[...current,type]:current}
 if(typeof module!=='undefined')module.exports={TYPES,CHART,effectiveness,defensiveEffectiveness,damageTaken,offensiveOptions,offensiveOptionsAgainst,toggleTypeSelection};
