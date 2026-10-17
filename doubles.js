@@ -243,7 +243,7 @@ function doubleTurnPlan(position,opponents,data){
   if(facts.some(f=>f.role==='pivot'))notes.push(`${p.name}: Parting Shot é uma alternativa condicional de reposicionamento; alcance em duplas e segurança não confirmados.`);
   if(facts.some(f=>f.role==='protect'))notes.push(`${p.name}: Protect pode proteger apenas o usuário; sucesso em usos consecutivos não é garantido.`);
   const setup=facts.find(f=>f.name==='Swords Dance'||f.name==='Calm Mind');
-  if(setup)notes.push(`${p.name}: ${setup.name} é uma opção de setup que consome a ação; nenhum boost foi presumido.`);
+  if(setup)notes.push(`${p.name}: ${setup.name} é uma alternativa ao ataque deste turno; consome a ação e só ajuda depois, se o usuário puder permanecer em campo. O parceiro ainda pode agir; nenhum boost foi presumido.`);
   facts.forEach(f=>{
    if(f.name==='Rain Dance')notes.push(`${p.name}: Rain Dance altera o clima por cinco turnos e fortalece Waterfall de Gyarados; é uma ação de suporte, não dano imediato.`);
    if(f.name==='Charge')notes.push(`${p.name}: Charge aumenta Defesa Especial em 1 estágio e dobra o próximo golpe Elétrico; Discharge alcança o parceiro, então não foi selecionado como ataque seguro.`);
@@ -252,6 +252,7 @@ function doubleTurnPlan(position,opponents,data){
    if(f.name==='Toxic')notes.push(`${p.name}: Toxic tenta envenenar gravemente um adversário, mas não causa dano imediato e depende de acerto e imunidades.`);
    if(f.name==='Hypnosis')notes.push(`${p.name}: Hypnosis tem 60% de precisão contra um alvo selecionado; sono e imunidades do alvo não são conhecidos.`);
    if(f.name==='Thunder Wave')notes.push(`${p.name}: Thunder Wave tem 90% de precisão contra um alvo selecionado; não afeta Terra e não causa dano.`);
+   if(f.name==='Hex'||f.name==='Infernal Parade')notes.push(`${p.name}: ${f.name} dobra o poder se o alvo tiver um problema de status; estado do alvo e ordem de ação são desconhecidos, então o ranking usa poder-base. Infernal Parade também tem 30% de chance de queimar.`);
   });
  });
  return {pattern:position.pattern,actions,swaps,future:null,notes,fakeOut};
