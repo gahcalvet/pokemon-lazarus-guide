@@ -3,7 +3,7 @@
 // Base stats are reference data, not the individual's current stats.
 const QUICK_CONDITIONAL = new Set(['Fake Out','First Impression','Sucker Punch','Thunderclap','Upper Hand','Bide']);
 const QUICK_SETUP = new Set(['Swords Dance']);
-const QUICK_KNOWN_ABILITIES = new Set(['Water Absorb','Solid Rock','Intimidate','No Guard','Hyper Cutter','Shell Armor','Synchronize','Gluttony','Blaze','Overgrow','Trace','Static']);
+const QUICK_KNOWN_ABILITIES = new Set(['Water Absorb','Volt Absorb','Solid Rock','Intimidate','No Guard','Hyper Cutter','Shell Armor','Synchronize','Gluttony','Blaze','Overgrow','Trace','Static']);
 function quickCompareKeys(a,b){for(let i=0;i<a.length;i++){if(a[i]!==b[i])return a[i]-b[i]}return 0}
 function quickStats(p,data){const s=data.species?.[p.name];return s&&['hp','def','spd','spe'].every(k=>Number.isFinite(s[k]))?s:null}
 function quickAttacks(p,types,data){
@@ -30,7 +30,7 @@ function quickRanking(types,team,data){
  const rows=team.map(p=>{
   const stats=quickStats(p,data),attacks=quickAttacks(p,types,data),received=types.map(t=>({type:t,multiplier:damageTaken(t,p)}));
   const values=received.map(x=>x.multiplier).sort((a,b)=>b-a);
-  const heals=types.includes('water')&&p.ability==='Water Absorb';
+  const heals=(types.includes('water')&&p.ability==='Water Absorb')||(types.includes('electric')&&p.ability==='Volt Absorb');
   const best=attacks.best;
   // Main immediate attack first; never assume a setup boost or a conditional bonus.
   const setupMoves=data.game==='Pokémon Dreamstone Mysteries'?new Set([...QUICK_SETUP,'Charge']):QUICK_SETUP;
@@ -53,7 +53,7 @@ function quickReason(r,scenario){
  const p=r.pokemon,parts=[];
  if(scenario==='direct'){
   parts.push(r.received.map(x=>`${TYPES[x.type]} ${quickFactor(x.multiplier)}`).join(' · ')+'.');
-  if(r.heals)parts.push('Water Absorb anula Água e recupera ¼ do HP máximo.');
+  if(r.heals)parts.push(p.ability==='Water Absorb'?'Water Absorb anula Água e recupera ¼ do HP máximo.':'Volt Absorb anula Elétrico e recupera ¼ do HP máximo.');
   if(p.ability==='Solid Rock'&&r.received.some(x=>x.multiplier>1))parts.push('Solid Rock já aplicado ao dano super efetivo.');
   if(r.stats)parts.push(`Bases HP/Def/SpD: ${r.stats.hp}/${r.stats.def}/${r.stats.spd}.`);
   if(p.ability==='Intimidate')parts.push('Intimidate reduz o Ataque ao entrar; não protege contra golpes especiais.');
@@ -90,10 +90,10 @@ function staySwitchAdvice(types,currentName,team,data){
  let decision,reason;
  const label=types.map(t=>TYPES[t]).join(' / '),currentFactor=quickFactor(currentRisk);
  if(currentRisk===0){
-  decision='IMUNIDADE POR TIPO';reason=`${current.pokemon.name} é imune a ${label}${current.heals?' e Water Absorb recupera HP':''}. Isso descreve apenas o tipo do golpe; habilidade, cobertura e situação da batalha não foram informadas.`;
+  decision='IMUNIDADE POR TIPO';reason=`${current.pokemon.name} é imune a ${label}${current.heals?' e '+current.pokemon.ability+' recupera HP':''}. Isso descreve apenas o tipo do golpe; habilidade, cobertura e situação da batalha não foram informadas.`;
  }else if(alternative&&alternativeRisk<currentRisk){
   decision=currentRisk>1?'AVALIAR TROCA':'ALTERNATIVA MAIS RESISTENTE';
-  reason=`${current.pokemon.name} recebe ${currentFactor} de ${label}${attack?` e tem ${positionAttackText(current)}`:' e não tem golpe de dano confirmado'}; ${alternative.pokemon.name} recebe ${quickFactor(alternativeRisk)} por tipo${alternative.heals?' e anula Água com Water Absorb':''}. O golpe favorável não garante agir primeiro ou nocautear; trocar também consome a ação.`;
+  reason=`${current.pokemon.name} recebe ${currentFactor} de ${label}${attack?` e tem ${positionAttackText(current)}`:' e não tem golpe de dano confirmado'}; ${alternative.pokemon.name} recebe ${quickFactor(alternativeRisk)} por tipo${alternative.heals?' e anula o tipo com '+alternative.pokemon.ability:''}. O golpe favorável não garante agir primeiro ou nocautear; trocar também consome a ação.`;
  }else if(currentRisk>1){
   decision='AMEAÇA POR TIPO';reason=`${current.pokemon.name} recebe ${currentFactor} de ${label}${attack?` e tem ${positionAttackText(current)}`:' sem golpe de dano confirmado'}; nenhuma alternativa da equipe reduz essa exposição. HP, velocidade, cobertura e golpe adversário podem mudar a decisão.`;
  }else if(currentRisk<=.5&&attack&&attack.multiplier>1&&!attack.conditional){
@@ -157,9 +157,10 @@ function dreamstoneIndividualActionRanking(types,currentName,team,data){
  }).sort((a,b)=>quickCompareKeys(b.score,a.score));
  const tactical=current.moves.map(([name])=>({name,facts:data.confirmedMoveFacts?.[name]||{}})).filter(m=>m.facts.category==='status').map(({name,facts})=>{
   const role=facts.role||'status',kind=role==='pivot'?'pivot':role==='setup'?'setup':role==='heal-self'?'heal':role==='seed'?'support':role==='debuff'?'support':'support';
-  const uncertainty=role==='heal-self'?'Valor depende do HP faltante e do clima; não foram informados.':role==='setup'?'Consome a ação; depende de sobreviver e agir antes de receber novo dano.':role==='pivot'?'Prioridade -6: o usuário pode ser atingido antes de sair; a troca também consome sua ação.':role==='seed'?'Depende de acertar e o alvo não ser imune; recuperação ocorre ao fim de turnos.':'Depende da precisão e da condição/imunidade do alvo, que são desconhecidas.';
-  return {kind,type:role==='pivot'?'REPOSICIONAR':role==='setup'?'PREPARAR':role==='heal-self'?'RECUPERAR':'SUPORTE',action:name,target:facts.target==='self'?'Próprio Pokémon':'Adversário',key:`${kind}:${name}`,reason:facts.effect||'Efeito de suporte confirmado.',risk:currentRisk,score:[0,0,0],uncertainty};
- });
+  const uncertainty=role==='heal-self'?'Valor depende do HP faltante e do clima; não foram informados.':role==='setup'?'Consome a ação; depende de sobreviver e agir antes de receber novo dano.':role==='pivot'?'Prioridade -6: o usuário pode ser atingido antes de sair; a troca também consome sua ação.':role==='seed'?'Depende de acertar e o alvo não ser imune; recuperação ocorre ao fim de turnos.':name==='Rain Dance'?'Útil se Gyarados puder aproveitar depois Waterfall ou se a chuva favorecer o plano; consome a ação e o clima dura cinco turnos.':name==='Toxic'?'Pode pressionar alvos resistentes a dano direto em turnos seguintes; falha contra algumas imunidades e não causa dano imediato.':name==='Hypnosis'?'Pode negar ações se acertar (60%); sono, imunidades e condição do alvo não foram confirmados.':name==='Thunder Wave'?'Pode reduzir a velocidade efetiva do alvo se acertar (90%); falha contra Terra e outras imunidades/condições.':name==='Charge'?'Pode preparar Discharge para o próximo turno e elevar a Defesa Especial; consome uma ação e não causa dano agora.':'Depende da precisão e da condição/imunidade do alvo, que são desconhecidas.';
+  const value=name==='Synthesis'? (currentRisk>1?3:2):name==='Leech Seed'||name==='Toxic'?2:name==='Hypnosis'||name==='Thunder Wave'?2:name==='Charge'&&current.moves.some(([n])=>n==='Discharge')?2:name==='Rain Dance'&&current.moves.some(([n])=>n==='Waterfall')?2:1;
+  return {kind,type:role==='pivot'?'REPOSICIONAR':role==='setup'?'PREPARAR':role==='heal-self'?'RECUPERAR':'SUPORTE',action:name,target:facts.target==='self'?'Próprio Pokémon':facts.target==='field'?'Campo': 'Adversário',key:`${kind}:${name}`,reason:facts.effect||'Efeito de suporte confirmado.',risk:currentRisk,score:[value,0,0],uncertainty};
+ }).sort((a,b)=>quickCompareKeys(b.score,a.score));
  const switches=team.filter(p=>p.name!==currentName).map(p=>({p,risk:Math.max(...types.map(t=>damageTaken(t,p)))})).filter(x=>x.risk<currentRisk).sort((a,b)=>a.risk-b.risk).slice(0,2).map(x=>({kind:'switch',type:'TROCAR',action:`Trocar ${currentName} por ${x.p.name}`,target:'Troca convencional',key:`switch:${x.p.name}`,reason:`Exposição por tipo cai de ${quickFactor(currentRisk)} para ${quickFactor(x.risk)}.`,risk:x.risk,score:[0,0,0],uncertainty:'A troca consome a ação; o entrante não ataca neste turno e ainda pode receber golpes.'}));
  const attackActions=attacks.map(a=>({...a,uncertainty:a.uncertainty||'Não estima dano, KO ou velocidade real.'}));
  const recommended=[];let recommendationReason='';

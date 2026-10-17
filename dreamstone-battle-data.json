@@ -1,61 +1,495 @@
 {
   "game": "Pokémon Dreamstone Mysteries",
-  "version": "Final release · tag release · source commit edd19c8",
+  "version": "Final release · tag release · source commit edd19c8; player team/progress updated 2026-10-17",
   "typeChart": "types_info.h at B_UPDATED_TYPE_MATCHUPS = GEN_LATEST; standard 18-type matchups (updates through Gen VI)",
   "dataSource": "https://github.com/dsmyst/dreamstone-mysteries/tree/release",
   "pressureComparable": true,
-  "highPriority": ["Quick Attack", "Shadow Sneak"],
+  "highPriority": [
+    "Quick Attack"
+  ],
   "species": {
-    "Linoone": {"hp":78,"atk":70,"def":61,"spa":50,"spd":61,"spe":100},
-    "Quilava": {"hp":58,"atk":64,"def":58,"spa":80,"spd":65,"spe":80},
-    "Bayleef": {"hp":60,"atk":62,"def":80,"spa":63,"spd":80,"spe":60},
-    "Honedge": {"hp":45,"atk":80,"def":100,"spa":35,"spd":37,"spe":28},
-    "Kirlia": {"hp":38,"atk":35,"def":35,"spa":65,"spd":55,"spe":50},
-    "Flaaffy": {"hp":70,"atk":55,"def":55,"spa":80,"spd":60,"spe":45}
+    "Gyarados": {
+      "hp": 95,
+      "atk": 125,
+      "def": 79,
+      "spa": 60,
+      "spd": 100,
+      "spe": 81
+    },
+    "Meganium": {
+      "hp": 80,
+      "atk": 82,
+      "def": 100,
+      "spa": 83,
+      "spd": 100,
+      "spe": 80
+    },
+    "Quilava": {
+      "hp": 58,
+      "atk": 64,
+      "def": 58,
+      "spa": 80,
+      "spd": 65,
+      "spe": 80
+    },
+    "Gardevoir": {
+      "hp": 68,
+      "atk": 65,
+      "def": 65,
+      "spa": 125,
+      "spd": 115,
+      "spe": 80
+    },
+    "Lanturn": {
+      "hp": 125,
+      "atk": 58,
+      "def": 58,
+      "spa": 76,
+      "spd": 76,
+      "spe": 67
+    },
+    "Linoone": {
+      "hp": 78,
+      "atk": 70,
+      "def": 61,
+      "spa": 50,
+      "spd": 61,
+      "spe": 100
+    }
   },
   "confirmedMoveFacts": {
-    "Headbutt": {"type":"normal","category":"physical","power":70,"accuracy":100,"accuracyMode":"check","pp":15,"priority":0,"effect":"Causa dano; pode fazer o alvo hesitar.","effectChance":"30% de chance de causar hesitação (flinch).","target":"selected-opponent"},
-    "Night Slash": {"type":"dark","category":"physical","power":70,"accuracy":100,"accuracyMode":"check","pp":15,"priority":0,"criticalHitStage":1,"effect":"Causa dano e tem estágio de crítico aumentado (+1).","target":"selected-opponent"},
-    "Pin Missile": {"type":"bug","category":"physical","power":25,"accuracy":95,"accuracyMode":"check","pp":20,"priority":0,"hits":"2–5","effect":"Atinge de 2 a 5 vezes; cada acerto tem poder base 25.","target":"selected-opponent"},
-    "Lick": {"type":"ghost","category":"physical","power":30,"accuracy":100,"accuracyMode":"check","pp":30,"priority":0,"effect":"Causa dano e pode paralisar o alvo.","effectChance":"30% de chance de paralisar.","target":"selected-opponent"},
-    "Leer": {"type":"normal","category":"status","power":0,"accuracy":100,"accuracyMode":"check","pp":30,"priority":0,"effect":"Reduz a Defesa do alvo em 1 estágio.","statChanges":{"target":"opponent","defense":-1},"target":"both-opponents"},
-    "Smokescreen": {"type":"normal","category":"status","power":0,"accuracy":100,"accuracyMode":"check","pp":20,"priority":0,"effect":"Reduz a Precisão do alvo em 1 estágio.","statChanges":{"target":"opponent","accuracy":-1},"target":"selected-opponent"},
-    "Flame Wheel": {"type":"fire","category":"physical","power":60,"accuracy":100,"accuracyMode":"check","pp":25,"priority":0,"effect":"Causa dano e pode queimar o alvo.","effectChance":"10% de chance de queimar.","target":"selected-opponent"},
-    "Quick Attack": {"type":"normal","category":"physical","power":40,"accuracy":100,"accuracyMode":"check","pp":30,"priority":1,"effect":"Causa dano com prioridade +1.","target":"selected-opponent"},
-    "Leech Seed": {"type":"grass","category":"status","power":0,"accuracy":90,"accuracyMode":"check","pp":10,"priority":0,"effect":"Semeia o alvo: ao fim dos turnos, drena 1/8 do HP máximo do alvo e recupera esse HP para o usuário. Falha contra alvos do tipo Planta.","role":"seed","target":"selected-opponent"},
-    "Synthesis": {"type":"grass","category":"status","power":0,"accuracy":null,"accuracyMode":"not-applicable","pp":5,"priority":0,"effect":"Recupera HP do usuário: 1/2 do HP máximo normalmente, 2/3 sob sol intenso e 1/4 sob outras condições climáticas.","role":"heal-self","target":"self"},
-    "Magical Leaf": {"type":"grass","category":"special","power":60,"accuracy":null,"accuracyMode":"bypass","pp":20,"priority":0,"effect":"Causa dano especial e não falha por verificações normais de precisão/evasão.","target":"selected-opponent"},
-    "Poison Powder": {"type":"poison","category":"status","power":0,"accuracy":75,"accuracyMode":"check","pp":35,"priority":0,"effect":"Tenta envenenar o alvo.","target":"selected-opponent"},
-    "Slash": {"type":"normal","category":"physical","power":70,"accuracy":100,"accuracyMode":"check","pp":20,"priority":0,"criticalHitStage":1,"effect":"Causa dano e tem estágio de crítico aumentado (+1).","target":"selected-opponent"},
-    "Shadow Sneak": {"type":"ghost","category":"physical","power":40,"accuracy":100,"accuracyMode":"check","pp":30,"priority":1,"effect":"Causa dano com prioridade +1.","target":"selected-opponent"},
-    "Aerial Ace": {"type":"flying","category":"physical","power":60,"accuracy":null,"accuracyMode":"bypass","pp":20,"priority":0,"effect":"Causa dano físico e não falha por verificações normais de precisão/evasão.","target":"selected-opponent"},
-    "Hypnosis": {"type":"psychic","category":"status","power":0,"accuracy":60,"accuracyMode":"check","pp":20,"priority":0,"effect":"Tenta colocar o alvo para dormir.","target":"selected-opponent"},
-    "Draining Kiss": {"type":"fairy","category":"special","power":50,"accuracy":100,"accuracyMode":"check","pp":10,"priority":0,"effect":"Causa dano especial e recupera HP equivalente a 75% do dano causado.","drainFraction":0.75,"target":"selected-opponent"},
-    "Teleport": {"type":"psychic","category":"status","power":0,"accuracy":null,"accuracyMode":"not-applicable","pp":20,"priority":-6,"effect":"Em batalha contra treinador, permite ao usuário sair de campo e ser substituído; em batalha selvagem, tenta fugir. Tem prioridade -6.","role":"pivot","target":"self"},
-    "Psybeam": {"type":"psychic","category":"special","power":65,"accuracy":100,"accuracyMode":"check","pp":20,"priority":0,"effect":"Causa dano e pode confundir o alvo.","effectChance":"10% de chance de confundir.","target":"selected-opponent"},
-    "Tackle": {"type":"normal","category":"physical","power":40,"accuracy":100,"accuracyMode":"check","pp":35,"priority":0,"effect":"Causa dano físico.","target":"selected-opponent"},
-    "Charge": {"type":"electric","category":"status","power":0,"accuracy":null,"accuracyMode":"not-applicable","pp":20,"priority":0,"effect":"Aumenta a Defesa Especial do usuário em 1 estágio e dobra o poder do próximo golpe Elétrico usado antes de sair de campo.","statChanges":{"target":"user","specialDefense":1},"role":"setup","target":"self"},
-    "Thunder Wave": {"type":"electric","category":"status","power":0,"accuracy":90,"accuracyMode":"check","pp":20,"priority":0,"effect":"Tenta paralisar o alvo.","target":"selected-opponent"},
-    "Thunder Shock": {"type":"electric","category":"special","power":40,"accuracy":100,"accuracyMode":"check","pp":30,"priority":0,"effect":"Causa dano e pode paralisar o alvo.","effectChance":"10% de chance de paralisar.","target":"selected-opponent"}
+    "Headbutt": {
+      "type": "normal",
+      "category": "physical",
+      "power": 70,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 15,
+      "priority": 0,
+      "effect": "Causa dano; pode fazer o alvo hesitar.",
+      "effectChance": "30% de chance de causar hesitação (flinch).",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Night Slash": {
+      "type": "dark",
+      "category": "physical",
+      "power": 70,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 15,
+      "priority": 0,
+      "criticalHitStage": 1,
+      "effect": "Causa dano e tem estágio de crítico aumentado (+1).",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Pin Missile": {
+      "type": "bug",
+      "category": "physical",
+      "power": 25,
+      "accuracy": 95,
+      "accuracyMode": "check",
+      "pp": 20,
+      "priority": 0,
+      "hits": "2–5",
+      "effect": "Atinge de 2 a 5 vezes; cada acerto tem poder base 25.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Lick": {
+      "type": "ghost",
+      "category": "physical",
+      "power": 30,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 30,
+      "priority": 0,
+      "effect": "Causa dano e pode paralisar o alvo.",
+      "effectChance": "30% de chance de paralisar.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Leer": {
+      "type": "normal",
+      "category": "status",
+      "power": 0,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 30,
+      "priority": 0,
+      "effect": "Reduz a Defesa do alvo em 1 estágio.",
+      "statChanges": {
+        "target": "opponent",
+        "defense": -1
+      },
+      "target": "both-opponents",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Smokescreen": {
+      "type": "normal",
+      "category": "status",
+      "power": 0,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 20,
+      "priority": 0,
+      "effect": "Reduz a Precisão do alvo em 1 estágio.",
+      "statChanges": {
+        "target": "opponent",
+        "accuracy": -1
+      },
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Flame Wheel": {
+      "type": "fire",
+      "category": "physical",
+      "power": 60,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 25,
+      "priority": 0,
+      "effect": "Causa dano e pode queimar o alvo.",
+      "effectChance": "10% de chance de queimar.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Quick Attack": {
+      "type": "normal",
+      "category": "physical",
+      "power": 40,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 30,
+      "priority": 1,
+      "effect": "Causa dano com prioridade +1.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Leech Seed": {
+      "type": "grass",
+      "category": "status",
+      "power": 0,
+      "accuracy": 90,
+      "accuracyMode": "check",
+      "pp": 10,
+      "priority": 0,
+      "effect": "Semeia o alvo: ao fim dos turnos, drena 1/8 do HP máximo do alvo e recupera esse HP para o usuário. Falha contra alvos do tipo Planta.",
+      "role": "seed",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h; drain behavior verified in battle mechanics"
+    },
+    "Synthesis": {
+      "type": "grass",
+      "category": "status",
+      "power": 0,
+      "accuracy": null,
+      "accuracyMode": "not-applicable",
+      "pp": 5,
+      "priority": 0,
+      "effect": "Recupera HP do usuário: 1/2 do HP máximo normalmente, 2/3 sob sol intenso e 1/4 sob outras condições climáticas.",
+      "role": "heal-self",
+      "target": "self",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h; weather healing verified in battle mechanics"
+    },
+    "Hypnosis": {
+      "type": "psychic",
+      "category": "status",
+      "power": 0,
+      "accuracy": 60,
+      "accuracyMode": "check",
+      "pp": 20,
+      "priority": 0,
+      "effect": "Tenta colocar o alvo para dormir.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h",
+      "role": "status"
+    },
+    "Draining Kiss": {
+      "type": "fairy",
+      "category": "special",
+      "power": 50,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 10,
+      "priority": 0,
+      "effect": "Causa dano especial e recupera HP equivalente a 75% do dano causado.",
+      "drainFraction": 0.75,
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Psybeam": {
+      "type": "psychic",
+      "category": "special",
+      "power": 65,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 20,
+      "priority": 0,
+      "effect": "Causa dano e pode confundir o alvo.",
+      "effectChance": "10% de chance de confundir.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Tackle": {
+      "type": "normal",
+      "category": "physical",
+      "power": 40,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 35,
+      "priority": 0,
+      "effect": "Causa dano físico.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Charge": {
+      "type": "electric",
+      "category": "status",
+      "power": 0,
+      "accuracy": null,
+      "accuracyMode": "not-applicable",
+      "pp": 20,
+      "priority": 0,
+      "effect": "Aumenta a Defesa Especial do usuário em 1 estágio e dobra o poder do próximo golpe Elétrico antes de sair de campo.",
+      "statChanges": {
+        "target": "user",
+        "specialDefense": 1
+      },
+      "role": "charge",
+      "target": "self",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Thunder Wave": {
+      "type": "electric",
+      "category": "status",
+      "power": 0,
+      "accuracy": 90,
+      "accuracyMode": "check",
+      "pp": 20,
+      "priority": 0,
+      "effect": "Tenta paralisar o alvo; não afeta Pokémon Terra e pode falhar por outras imunidades/condições.",
+      "role": "status",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Rain Dance": {
+      "type": "water",
+      "category": "status",
+      "power": 0,
+      "accuracy": null,
+      "accuracyMode": "not-applicable",
+      "pp": 5,
+      "priority": 0,
+      "effect": "Define chuva no campo por 5 turnos e fortalece golpes de Água; não causa dano.",
+      "role": "weather",
+      "turns": 5,
+      "target": "field",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Crunch": {
+      "type": "dark",
+      "category": "physical",
+      "power": 80,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 15,
+      "priority": 0,
+      "effect": "Causa dano e pode reduzir a Defesa do alvo em 1 estágio.",
+      "effectChance": "20% de chance de reduzir Defesa.",
+      "statChanges": {
+        "target": "opponent",
+        "defense": -1
+      },
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Waterfall": {
+      "type": "water",
+      "category": "physical",
+      "power": 80,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 15,
+      "priority": 0,
+      "effect": "Causa dano e pode fazer o alvo hesitar.",
+      "effectChance": "20% de chance de causar flinch.",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Giga Drain": {
+      "type": "grass",
+      "category": "special",
+      "power": 75,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 10,
+      "priority": 0,
+      "effect": "Causa dano especial e recupera HP equivalente a 50% do dano causado.",
+      "drainFraction": 0.5,
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Toxic": {
+      "type": "poison",
+      "category": "status",
+      "power": 0,
+      "accuracy": 90,
+      "accuracyMode": "check",
+      "pp": 10,
+      "priority": 0,
+      "effect": "Tenta causar envenenamento grave, cujo dano aumenta a cada turno.",
+      "role": "status",
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Dazzling Gleam": {
+      "type": "fairy",
+      "category": "special",
+      "power": 80,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 10,
+      "priority": 0,
+      "effect": "Causa dano especial aos dois adversários em duplas.",
+      "target": "both-opponents",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Bubble Beam": {
+      "type": "water",
+      "category": "special",
+      "power": 65,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 20,
+      "priority": 0,
+      "effect": "Causa dano especial e pode reduzir a Velocidade do alvo em 1 estágio.",
+      "effectChance": "10% de chance de reduzir Velocidade.",
+      "statChanges": {
+        "target": "opponent",
+        "speed": -1
+      },
+      "target": "selected-opponent",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    },
+    "Discharge": {
+      "type": "electric",
+      "category": "special",
+      "power": 80,
+      "accuracy": 100,
+      "accuracyMode": "check",
+      "pp": 15,
+      "priority": 0,
+      "effect": "Causa dano especial a todos os demais Pokémon e pode paralisar. Em duplas também pode atingir o parceiro.",
+      "effectChance": "30% de chance de paralisar.",
+      "target": "all-others",
+      "source": "ROM Dreamstone Mysteries release: src/data/moves_info.h"
+    }
   },
   "doublesMechanics": {
-    "Leer": {"target":"both-opponents","role":"debuff"},
-    "Smokescreen": {"target":"selected-opponent","role":"debuff"},
-    "Leech Seed": {"target":"selected-opponent","role":"seed"},
-    "Synthesis": {"target":"self","role":"heal-self"},
-    "Magical Leaf": {"target":"selected-opponent"},
-    "Poison Powder": {"target":"selected-opponent","role":"status"},
-    "Hypnosis": {"target":"selected-opponent","role":"status"},
-    "Teleport": {"target":"self","role":"pivot"},
-    "Charge": {"target":"self","role":"setup"},
-    "Thunder Wave": {"target":"selected-opponent","role":"status"}
+    "Rain Dance": {
+      "target": "field",
+      "role": "weather"
+    },
+    "Tackle": {
+      "target": "selected-opponent"
+    },
+    "Crunch": {
+      "target": "selected-opponent"
+    },
+    "Waterfall": {
+      "target": "selected-opponent"
+    },
+    "Leech Seed": {
+      "target": "selected-opponent",
+      "role": "seed"
+    },
+    "Synthesis": {
+      "target": "self",
+      "role": "heal-self"
+    },
+    "Giga Drain": {
+      "target": "selected-opponent"
+    },
+    "Toxic": {
+      "target": "selected-opponent",
+      "role": "status"
+    },
+    "Leer": {
+      "target": "both-opponents",
+      "role": "debuff"
+    },
+    "Smokescreen": {
+      "target": "selected-opponent",
+      "role": "debuff"
+    },
+    "Flame Wheel": {
+      "target": "selected-opponent"
+    },
+    "Quick Attack": {
+      "target": "selected-opponent"
+    },
+    "Hypnosis": {
+      "target": "selected-opponent",
+      "role": "status"
+    },
+    "Draining Kiss": {
+      "target": "selected-opponent"
+    },
+    "Dazzling Gleam": {
+      "target": "both-opponents"
+    },
+    "Psybeam": {
+      "target": "selected-opponent"
+    },
+    "Thunder Wave": {
+      "target": "selected-opponent",
+      "role": "status"
+    },
+    "Bubble Beam": {
+      "target": "selected-opponent"
+    },
+    "Charge": {
+      "target": "self",
+      "role": "charge"
+    },
+    "Discharge": {
+      "target": "all-others"
+    },
+    "Headbutt": {
+      "target": "selected-opponent"
+    },
+    "Night Slash": {
+      "target": "selected-opponent"
+    },
+    "Pin Missile": {
+      "target": "selected-opponent"
+    },
+    "Lick": {
+      "target": "selected-opponent"
+    }
   },
   "abilityNotes": {
-    "Gluttony":"Berry-related ability; no berry item is confirmed, so it does not change these rankings.",
-    "Blaze":"Can strengthen Fire moves at low HP; current HP is unknown and the boost is not assumed.",
-    "Overgrow":"Can strengthen Grass moves at low HP; current HP is unknown and the boost is not assumed.",
-    "No Guard":"Moves used by or targeting Honedge do not miss from ordinary accuracy/evasion checks; individual opponent moves are unknown.",
-    "Trace":"Copies an opponent ability on entry; opponent ability and resulting effect are unknown.",
-    "Static":"Contacting attackers may be paralyzed; no contact move or chance is assumed for an unknown opponent."
+    "Intimidate": "Reduz o Ataque dos adversários afetados ao entrar; não altera dano especial.",
+    "Overgrow": "Pode fortalecer golpes de Planta quando o HP está baixo; HP atual desconhecido, bônus não presumido.",
+    "Blaze": "Pode fortalecer golpes de Fogo quando o HP está baixo; HP atual desconhecido, bônus não presumido.",
+    "Trace": "Copia uma habilidade adversária ao entrar; a habilidade copiada depende do oponente.",
+    "Volt Absorb": "Anula golpes Elétricos afetados e pode recuperar 1/4 do HP máximo.",
+    "Gluttony": "Altera o limiar de ativação de Berries; o item atual de Linoone é Life Orb, que não é Berry, então nenhum efeito do item é presumido."
+  },
+  "dataSourceFiles": [
+    "include/config/battle.h",
+    "src/data/types_info.h",
+    "src/data/pokemon/species_info/gen_1_families.h",
+    "src/data/pokemon/species_info/gen_2_families.h",
+    "src/data/pokemon/species_info/gen_3_families.h",
+    "src/data/moves_info.h"
+  ],
+  "itemNotes": {
+    "Life Orb": "Item confirmado; multiplicador de dano/recuo não é aplicado ao ranking estrutural.",
+    "Leftovers": "Item confirmado; recuperação passiva por turno não é aplicada ao ranking estrutural.",
+    "Charcoal": "Item confirmado; bônus de dano não é aplicado ao ranking estrutural.",
+    "Wise Glasses": "Item confirmado; bônus de dano não é aplicado ao ranking estrutural."
   }
 }

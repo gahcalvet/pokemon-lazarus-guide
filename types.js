@@ -21,7 +21,7 @@ const CHART = {
  fairy:{fire:.5,fighting:2,poison:.5,dragon:2,dark:2,steel:.5}
 };
 function effectiveness(attack,defenders){return defenders.reduce((n,t)=>n*(CHART[attack]?.[t]??1),1)}
-function defensiveEffectiveness(attack,pokemon){return attack==='water'&&pokemon.ability==='Water Absorb'?0:effectiveness(attack,pokemon.types)}
+function defensiveEffectiveness(attack,pokemon){return (attack==='water'&&pokemon.ability==='Water Absorb')||(attack==='electric'&&pokemon.ability==='Volt Absorb')?0:effectiveness(attack,pokemon.types)}
 function damageTaken(attack,pokemon){const n=defensiveEffectiveness(attack,pokemon);return n>1&&pokemon.ability==='Solid Rock'?n*.75:n}
 function offensiveOptionsAgainst(defenders,team){return team.flatMap(p=>p.moves.filter(m=>m[1]&&effectiveness(m[1],defenders)>1).map(m=>({pokemon:p.name,move:m[0],type:m[1],multiplier:effectiveness(m[1],defenders)})))}
 function offensiveOptions(type,team){return offensiveOptionsAgainst([type],team)}

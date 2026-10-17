@@ -1,81 +1,17 @@
-<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes · Guia de batalha</title><style>body{background:#111418;color:#d4ece0;font:15px monospace;padding:30px}pre{white-space:pre-wrap}</style><h1>Verificação dos perfis e matchups</h1><pre id="result">Executando testes anteriores…</pre><h2>Regressões Dreamstone</h2><pre id="dreamstone-result">Executando…</pre><script src="types.js?v=4"></script><script src="ranking.js?v=11"></script><script src="doubles.js?v=11"></script><script src="doubles-tests.js?v=13"></script><script src="audit-tests.js?v=9"></script><script src="individual-actions-tests.js?v=2"></script><script src="dreamstone-tests.js?v=1"></script><script>
-Promise.all([fetch('team.json?v=9').then(r=>r.json()),fetch('battle-data.json?v=9').then(r=>r.json()),fetch('audit-reference.json?v=9').then(r=>r.json()),fetch('dreamstone-team.json?v=2').then(r=>r.json()),fetch('dreamstone-battle-data.json?v=1').then(r=>r.json())]).then(([{team},battleData,auditReference,dreamstone,dreamstoneData])=>{let passed=0;const results=[];const test=(name,fn)=>{if(!fn())throw Error(name);passed++;results.push('✓ '+name)};const get=n=>team.find(p=>p.name===n);try{const dreamstoneResults=runDreamstoneTests(team,battleData,dreamstone.team,dreamstoneData);document.querySelector('#dreamstone-result').textContent=dreamstoneResults.join('\n')+'\n\n'+dreamstoneResults.length+' testes Dreamstone passaram.'}catch(e){document.querySelector('#dreamstone-result').textContent='FALHA Dreamstone: '+e.message}
-test('18 tipos, cada um com ícone',()=>Object.keys(TYPES).length===18);
-test('Gligar imune a Terra e Elétrico',()=>['ground','electric'].every(t=>effectiveness(t,get('Gligar').types)===0));
-test('Gligar recebe 4× de Gelo',()=>effectiveness('ice',get('Gligar').types)===4);
-test('Honedge imune a Normal, Lutador e Veneno',()=>['normal','fighting','poison'].every(t=>effectiveness(t,get('Honedge').types)===0));
-test('Honedge resiste ¼ a Inseto',()=>effectiveness('bug',get('Honedge').types)===.25);
-test('Kirlia imune a Dragão, ¼ Lutador, neutro Sombrio e Inseto',()=>effectiveness('dragon',get('Kirlia').types)===0&&effectiveness('fighting',get('Kirlia').types)===.25&&effectiveness('dark',get('Kirlia').types)===1&&effectiveness('bug',get('Kirlia').types)===1);
-test('Tirtouga: Planta 4× por tipos, 3× com Solid Rock',()=>effectiveness('grass',get('Tirtouga').types)===4&&damageTaken('grass',get('Tirtouga'))===3);
-test('Tirtouga resiste ¼ a Fogo',()=>effectiveness('fire',get('Tirtouga').types)===.25);
-test('Gligar e Tirtouga neutros a Pedra',()=>['Gligar','Tirtouga'].every(n=>effectiveness('rock',get(n).types)===1));
-test('Torracat é Fogo e não é imune a Psíquico',()=>get('Torracat').types.join()==='fire'&&effectiveness('psychic',get('Torracat').types)===1);
-test('Lapras: Water Absorb concede imunidade a Água',()=>get('Lapras').ability==='Water Absorb'&&defensiveEffectiveness('water',get('Lapras'))===0&&damageTaken('water',get('Lapras'))===0);
-test('Água/Gelo permanece resistência ½× por tipos',()=>effectiveness('water',get('Lapras').types)===.5&&defensiveEffectiveness('water',{...get('Lapras'),ability:'Shell Armor'})===.5);
-test('Water Absorb não altera outros ataques recebidos',()=>Object.keys(TYPES).filter(t=>t!=='water').every(t=>defensiveEffectiveness(t,get('Lapras'))===effectiveness(t,get('Lapras').types)));
-test('Water Absorb não concede imunidade a outro integrante',()=>team.filter(p=>p.name!=='Lapras').every(p=>defensiveEffectiveness('water',p)===effectiveness('water',p.types)));
-test('Magical Leaf: Água, Terra e Pedra',()=>['water','ground','rock'].every(t=>offensiveOptions(t,team).some(m=>m.pokemon==='Kirlia'&&m.move==='Magical Leaf')));
-test('Ice Shard: Dragão, Planta, Terra e Voador',()=>['dragon','grass','ground','flying'].every(t=>offensiveOptions(t,team).some(m=>m.move==='Ice Shard')));
-test('Nenhum movimento de Terra, Aço ou Fada inventado',()=>team.every(p=>p.moves.every(m=>!['ground','steel','fairy'].includes(m[1]))));
-test('Suporte não aparece como dano',()=>Object.keys(TYPES).every(t=>offensiveOptions(t,team).every(m=>!['Parting Shot','Swords Dance','Heal Pulse','Protect','Confuse Ray'].includes(m.move))));
-test('24 movimentos confirmados',()=>team.reduce((s,p)=>s+p.moves.length,0)===24);
-test('Água/Voador: Planta é neutro, Elétrico 4×',()=>effectiveness('grass',['water','flying'])===1&&effectiveness('electric',['water','flying'])===4);
-test('Água/Voador: Magical Leaf não entra como super efetivo',()=>!offensiveOptionsAgainst(['water','flying'],team).some(m=>m.move==='Magical Leaf'));
-test('Inseto/Aço: Fire Fang 4×; Ancient Power neutro',()=>offensiveOptionsAgainst(['bug','steel'],team).some(m=>m.move==='Fire Fang'&&m.multiplier===4)&&!offensiveOptionsAgainst(['bug','steel'],team).some(m=>m.move==='Ancient Power'));
-test('Terra/Voador: imunidade Elétrica prevalece; Gelo 4×',()=>effectiveness('electric',['ground','flying'])===0&&effectiveness('ice',['ground','flying'])===4);
-test('Ordem dos tipos não muda a ofensiva',()=>JSON.stringify(offensiveOptionsAgainst(['bug','steel'],team))===JSON.stringify(offensiveOptionsAgainst(['steel','bug'],team)));
-test('Seleção: dois tipos distintos, desmarcar e limpar',()=>toggleTypeSelection(['water'],'flying').join()==='water,flying'&&toggleTypeSelection(['water','flying'],'water').join()==='flying'&&toggleTypeSelection(['water','flying'],'all').length===0&&toggleTypeSelection(['water','flying'],'fire').length===2);
-
-const rank=t=>quickRanking(t,team,battleData);
-const direct=t=>rank(t).direct[0].pokemon.name;
-const free=t=>rank(t).free[0].pokemon.name;
-test('Modo rápido: Water Absorb lidera entrada em Água',()=>direct(['water'])==='Lapras');
-test('Modo rápido: imunidades naturais lideram Normal, Terra e Elétrico',()=>direct(['normal'])==='Honedge'&&direct(['ground'])==='Gligar'&&direct(['electric'])==='Gligar');
-test('Modo rápido: Tirtouga recebe ¼ de Fogo e lidera',()=>direct(['fire'])==='Tirtouga');
-test('Modo rápido: troca direta e entrada livre podem divergir',()=>direct(['water'])==='Lapras'&&free(['water'])==='Kirlia');
-test('Modo rápido: Gligar usa bases do Lazarus, não velocidade oficial',()=>rank(['electric']).direct.find(r=>r.pokemon.name==='Gligar').stats.spe===60);
-test('Modo rápido: Lapras usa bases modificadas do Lazarus',()=>battleData.species.Lapras.atk===75&&battleData.species.Lapras.spa===95);
-test('Modo rápido: Água/Voador não promove Magical Leaf a super efetivo',()=>rank(['water','flying']).free.every(r=>r.attacks.best?.name!=='Magical Leaf'||r.attacks.best.multiplier===1));
-test('Modo rápido: Terra/Voador favorece Ice Shard 4× com STAB',()=>free(['ground','flying'])==='Lapras'&&rank(['ground','flying']).free[0].attacks.best.multiplier===4);
-test('Modo rápido: dois ataques recebidos não têm multiplicadores fundidos',()=>rank(['water','electric']).direct.find(r=>r.pokemon.name==='Lapras').received.map(x=>x.multiplier).join()==='0,2');
-test('Modo rápido: Solid Rock incluído na fraqueza, sem apagar risco',()=>rank(['grass']).direct.find(r=>r.pokemon.name==='Tirtouga').received[0].multiplier===3);
-test('Modo rápido: golpes condicionais não substituem pressão sustentada',()=>rank(['normal']).free.find(r=>r.pokemon.name==='Torracat').attacks.best.name!=='Fake Out');
-test('Modo rápido: imunidade adversária exclui prioridade ineficaz',()=>rank(['ghost']).free.find(r=>r.pokemon.name==='Gligar').attacks.priority.every(m=>m.name!=='Quick Attack'));
-test('Modo rápido: Heal Pulse não conta como recuperação própria',()=>rank(['water']).direct.find(r=>r.pokemon.name==='Kirlia').heals===false);
-test('Modo rápido: Swords Dance não cria golpe de Aço ou boost de dano',()=>rank(['fairy']).free.find(r=>r.pokemon.name==='Honedge').attacks.best.multiplier<=1);
-test('Modo rápido: todos os 18 tipos exibem os seis integrantes uma vez',()=>Object.keys(TYPES).every(t=>['direct','free'].every(k=>rank([t])[k].length===6&&new Set(rank([t])[k].map(r=>r.pokemon.name)).size===6)));
-test('Modo rápido: as 153 combinações mantêm ranking e ordem invariantes',()=>Object.keys(TYPES).every((a,i)=>Object.keys(TYPES).slice(i+1).every(b=>['direct','free'].every(k=>rank([a,b])[k].map(r=>r.pokemon.name).join()===rank([b,a])[k].map(r=>r.pokemon.name).join()))));
-test('Modo rápido: não modifica equipe, movimentos ou referência',()=>{const before=JSON.stringify([team,battleData]);rank(['water']);rank(['grass','fire']);return JSON.stringify([team,battleData])===before});
-test('Modo rápido: retirar Water Absorb atualiza o ranking automaticamente',()=>{const altered=team.map(p=>p.name==='Lapras'?{...p,ability:'Shell Armor'}:p);return quickRanking(['water'],altered,battleData).direct.find(r=>r.pokemon.name==='Lapras').received[0].multiplier===.5});
-test('Modo rápido: movimento removido desaparece da recomendação',()=>{const altered=team.map(p=>p.name==='Kirlia'?{...p,moves:p.moves.filter(m=>m[0]!=='Magical Leaf')}:p);return !quickRanking(['water'],altered,battleData).free.some(r=>r.attacks.best?.name==='Magical Leaf')});
-test('Modo rápido: evolução confirmada usa nova espécie sem alterar origem',()=>{const altered=team.map(p=>p.name==='Torracat'?{...p,name:'Incineroar',types:['fire','dark']}:p);const r=quickRanking(['psychic'],altered,battleData).direct.find(r=>r.pokemon.name==='Incineroar');return r.received[0].multiplier===0&&r.stats.hp===battleData.species.Incineroar.hp&&get('Torracat').name==='Torracat'});
-test('Modo rápido: atributo desconhecido não recebe valor inventado',()=>{const altered=team.map(p=>p.name==='Lapras'?{...p,name:'Espécie não verificada'}:p);const r=quickRanking(['water'],altered,battleData);return r.direct.find(x=>x.pokemon.name==='Espécie não verificada').stats===null&&r.warnings.some(x=>x.includes('atributos'))});
-test('Modo rápido: Synchronize confirmado não aparece como ausente',()=>get('Kirlia').ability==='Synchronize'&&!rank(['water']).warnings.some(x=>x.includes('Kirlia')||x.includes('habilidade nova')));
-test('Modo rápido: empates completos não recebem superioridade inventada',()=>{const clone={...get('Lapras'),name:'Clone'};const d={...battleData,species:{...battleData.species,Clone:battleData.species.Lapras}};const r=quickRanking(['water'],[get('Lapras'),clone],d);return r.direct.every(x=>x.directKeyTied&&x.directKeyRank===1)&&r.free.every(x=>x.freeKeyTied&&x.freeKeyRank===1)});
-test('Modo rápido: seleção vazia, repetida ou inválida não gera recomendação',()=>[[],['water','water'],['invalido'],['fire','water','grass']].every(t=>quickRanking(t,team,battleData).direct.length===0));
-test('Modo rápido: justificativas citam dados concretos',()=>Object.keys(TYPES).every(t=>rank([t]).direct.every(r=>quickReason(r,'direct').includes(TYPES[t])&&quickReason(r,'free').length>30)));
-
-
-test('Kirlia confirmado, sem antecipar Gardevoir',()=>get('Kirlia').types.join()==='psychic,fairy'&&get('Kirlia').ability==='Synchronize'&&!team.some(p=>['Ralts','Gardevoir','Incineroar'].includes(p.name)));
-test('Kirlia usa todas as bases verificadas do Lazarus',()=>JSON.stringify(battleData.species.Kirlia)===JSON.stringify({hp:38,atk:35,def:35,spa:65,spd:55,spe:50}));
-test('Honedge: moveset confirmado sem Tackle e Fury Cutter',()=>get('Honedge').moves.map(m=>m[0]).join()==='Shadow Sneak,Swords Dance,Aerial Ace,Pursuit');
-test('Shadow Sneak físico, prioridade +1 e STAB',()=>{const a=rank(['ghost']).free.find(r=>r.pokemon.name==='Honedge').attacks.best;return a.name==='Shadow Sneak'&&a.multiplier===2&&a.stab&&a.priority&&a.facts.priority===1&&a.facts.category==='physical'});
-test('Shadow Sneak responde a Psíquico e Fantasma',()=>['psychic','ghost'].every(t=>offensiveOptions(t,team).some(m=>m.move==='Shadow Sneak'&&m.pokemon==='Honedge')));
-test('Aerial Ace e Acrobatics cobrem Planta, Lutador e Inseto',()=>['grass','fighting','bug'].every(t=>['Aerial Ace','Acrobatics'].every(n=>offensiveOptions(t,team).some(m=>m.move===n))));
-test('Rock Tomb cobre Fogo, Gelo, Voador e Inseto',()=>['fire','ice','flying','bug'].every(t=>offensiveOptions(t,team).some(m=>m.move==='Rock Tomb'&&m.pokemon==='Gligar')));
-test('Gligar preserva quatro movimentos com Rock Tomb, sem golpes recusados ou Rock Smash',()=>get('Gligar').moves.map(m=>m[0]).join()==='Quick Attack,Acrobatics,Rock Tomb,Knock Off'&&!get('Gligar').moves.some(m=>['Rock Smash','Sand Tomb','Slash'].includes(m[0])));
-test('Acrobatics possui STAB mas não inventa item nem poder dobrado',()=>{const r=rank(['grass']).free.find(r=>r.pokemon.name==='Gligar');return r.attacks.best.stab&&r.attacks.best.facts.powerDoublesWithoutItem&&!Object.hasOwn(get('Gligar'),'item')&&quickReason(r,'free').includes('bônus não presumido')&&!Object.hasOwn(r.attacks.best,'effectivePower')});
-test('Crunch físico poder 80 substitui Bite, mantendo Solid Rock',()=>get('Tirtouga').ability==='Solid Rock'&&get('Tirtouga').moves.map(m=>m[0]).join()==='Crunch,Protect,Aqua Jet,Ancient Power'&&battleData.confirmedMoveFacts.Crunch.power===80&&battleData.confirmedMoveFacts.Crunch.category==='physical');
-test('Crunch cobre Psíquico e Fantasma',()=>['psychic','ghost'].every(t=>offensiveOptions(t,team).some(m=>m.move==='Crunch'&&m.pokemon==='Tirtouga')));
-test('Torracat permanece com seus quatro golpes, sem Bite',()=>get('Torracat').moves.map(m=>m[0]).join()==='Knock Off,Fire Fang,Parting Shot,Fake Out');
-test('Lapras preserva Water Absorb e golpes, sem Rain Dance',()=>get('Lapras').ability==='Water Absorb'&&get('Lapras').moves.map(m=>m[0]).join()==='Body Slam,Confuse Ray,Water Pulse,Ice Shard');
-test('Psíquico/Fantasma: Shadow Sneak recebe efetividade 4×',()=>rank(['psychic','ghost']).free.find(r=>r.pokemon.name==='Honedge').attacks.best.multiplier===4);
-test('Normal/Fantasma: imunidade a Shadow Sneak prevalece',()=>effectiveness('ghost',['normal','ghost'])===0&&!offensiveOptionsAgainst(['normal','ghost'],team).some(m=>m.move==='Shadow Sneak'));
-test('Planta/Aço: Aerial Ace e Acrobatics são neutros',()=>['Aerial Ace','Acrobatics'].every(n=>!offensiveOptionsAgainst(['grass','steel'],team).some(m=>m.move===n)));
-test('Sombrio/Voador: Rock Tomb é 2× pelo Voador',()=>offensiveOptionsAgainst(['dark','flying'],team).some(m=>m.move==='Rock Tomb'&&m.multiplier===2));
-test('Shadow Sneak lidera entrada livre em Fantasma e Psíquico',()=>free(['ghost'])==='Honedge'&&free(['psychic'])==='Honedge');
-
-const individualResults=runIndividualActionTests(team,battleData);results.push(...individualResults);passed+=individualResults.length;const doublesResults=runDoublesTests(team,battleData);results.push(...doublesResults);passed+=doublesResults.length;
-const auditResults=runAuditTests(team,battleData,auditReference);results.push(...auditResults);passed+=auditResults.length;
-document.querySelector('#result').textContent=results.join('\n')+'\n\n'+passed+' testes passaram.';}).catch(e=>{document.querySelector('#result').textContent='FALHA: '+e.message;throw e});
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes · Guia de batalha</title><style>body{background:#111418;color:#d4ece0;font:15px monospace;padding:30px}pre{white-space:pre-wrap}</style><h1>Verificação dos perfis e matchups</h1><pre id="result">Executando verificações dos dois perfis…</pre><h2>Regressões Dreamstone</h2><pre id="dreamstone-result">Executando…</pre>
+<script src="types.js?v=5"></script><script src="ranking.js?v=12"></script><script src="doubles.js?v=12"></script><script src="dreamstone-tests.js?v=2"></script>
+<script>
+Promise.all([fetch('team.json?v=12').then(r=>r.json()),fetch('battle-data.json?v=12').then(r=>r.json()),fetch('dreamstone-team.json?v=3').then(r=>r.json()),fetch('dreamstone-battle-data.json?v=2').then(r=>r.json())]).then(([lazarus,battleData,dreamstone,dreamstoneData])=>{
+ Object.assign(dreamstone.team,{progress:dreamstone.progress,typeNotes:dreamstone.typeNotes});
+ const tests=[],check=(name,fn)=>{if(!fn())throw Error(name);tests.push('✓ '+name)};
+ try{
+  check('Lazarus mantém os seis Pokémon confirmados',()=>lazarus.team.map(p=>p.name).join('|')==='Torracat|Aegislash|Gliscor|Gardevoir|Carracosta|Lapras');
+  check('Lazarus mantém Lapras, Water Absorb e Ice Beam',()=>{const p=lazarus.team.find(x=>x.name==='Lapras');return p.ability==='Water Absorb'&&p.moves.some(m=>m[0]==='Ice Beam')});
+  check('Lazarus: Poison Heal, Toxic Orb e golpes de Gliscor',()=>{const p=lazarus.team.find(x=>x.name==='Gliscor');return p.ability==='Poison Heal'&&p.item==='Toxic Orb'&&p.moves.map(m=>m[0]).join('|')==='U-turn|Fly|Rock Tomb|Knock Off'});
+  check('18 tipos carregam e a imunidade Water Absorb não afeta outros tipos',()=>Object.keys(TYPES).length===18&&defensiveEffectiveness('water',lazarus.team.find(p=>p.name==='Lapras'))===0&&defensiveEffectiveness('electric',lazarus.team.find(p=>p.name==='Lapras'))===effectiveness('electric',lazarus.team.find(p=>p.name==='Lapras').types));
+  check('Lazarus individual e duplas retornam apenas integrantes do perfil',()=>{const a=quickRanking(['water'],lazarus.team,battleData),d=doubleAnalyze([['water'],['flying']],lazarus.team,battleData,['Lapras','Gliscor']);return a.direct.length===6&&d.valid&&d.all.length===15&&d.all.every(x=>x.pair.every(p=>lazarus.team.includes(p)))});
+  const dreams=runDreamstoneTests(lazarus.team,battleData,dreamstone.team,dreamstoneData);document.querySelector('#dreamstone-result').textContent=dreams.join('\n')+'\n\n'+dreams.length+' testes Dreamstone passaram.';
+  document.querySelector('#result').textContent=tests.join('\n')+'\n\n'+tests.length+' verificações de regressão Lazarus passaram.';
+ }catch(e){document.querySelector('#result').textContent='FALHA: '+e.message;throw e}
+}).catch(e=>{document.querySelector('#result').textContent='FALHA: '+e.message;throw e});
 </script></html>

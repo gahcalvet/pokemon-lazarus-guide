@@ -17,7 +17,7 @@ function doubleMove(p,move,opponents,data){
 function doubleAllyImpact(move,partner){
  if(move.target!=='all-others')return null;
  const byTypes=effectiveness(move.type,partner.types),received=damageTaken(move.type,partner);
- return {partner:partner.name,multiplier:received,natural:byTypes===0,ability:byTypes!==0&&received===0,heals:move.type==='water'&&partner.ability==='Water Absorb',protected:false};
+ return {partner:partner.name,multiplier:received,natural:byTypes===0,ability:byTypes!==0&&received===0,heals:(move.type==='water'&&partner.ability==='Water Absorb')||(move.type==='electric'&&partner.ability==='Volt Absorb'),protected:false};
 }
 function doubleActions(p,partner,opponents,data){
  const moves=p.moves.filter(m=>m[1]&&['physical','special'].includes(data.confirmedMoveFacts?.[m[0]]?.category)).map(m=>doubleMove(p,m,opponents,data));
@@ -68,9 +68,10 @@ function doubleSupport(pair,opponents,data){
   const partner=pair[1-index];
   if(p.ability==='Intimidate')notes.push({kind:'intimidate',owner:p.name,text:`${p.name}: Intimidate pode reduzir o Ataque dos dois adversários ao entrar, se forem afetados. Ajuda ambos os aliados contra golpes físicos; não reduz dano especial nem é reaplicado por permanecer.`});
   if(p.ability==='No Guard')notes.push({kind:'no-guard',owner:p.name,text:`${p.name}: No Guard também permite que os golpes dirigidos a ele não errem; não melhora a precisão do parceiro.`});
+  if(p.ability==='Volt Absorb')notes.push({kind:'volt-absorb',owner:p.name,text:`${p.name}: Volt Absorb anula golpes Elétricos afetados e pode recuperar 1/4 do HP máximo; golpes conhecidos e direcionamento dependem do adversário.`});
   if(p.ability==='Static')notes.push({kind:'static',owner:p.name,text:`${p.name}: Static pode paralisar atacantes que usem golpes de contato. Sem o golpe e a habilidade adversários, o efeito não entra nos rankings.`});
   if(p.ability==='Blaze'||p.ability==='Overgrow')notes.push({kind:'low-hp-ability',owner:p.name,text:`${p.name}: ${p.ability} pode fortalecer golpes ${p.ability==='Blaze'?'de Fogo':'de Planta'} com HP baixo; HP atual desconhecido, bônus não presumido.`});
-  if(p.ability==='Gluttony')notes.push({kind:'gluttony',owner:p.name,text:`${p.name}: Gluttony altera o limiar de ativação de Berries; item não informado, então nenhum efeito foi presumido.`});
+  if(p.ability==='Gluttony')notes.push({kind:'gluttony',owner:p.name,text:`${p.name}: Gluttony altera o limiar de ativação de Berries; Life Orb não é uma Berry, então Gluttony não afeta o item atual.`});
   if(p.ability==='Trace')notes.push({kind:'trace',owner:p.name,text:`${p.name}: Trace copia a habilidade do adversário ao entrar; habilidade adversária desconhecida, nenhum bônus foi presumido.`});
   p.moves.forEach(m=>{
    const move=doubleMove(p,m,opponents,data),f=move.facts;
@@ -84,7 +85,10 @@ function doubleSupport(pair,opponents,data){
    if(f.role==='heal-self')notes.push({kind:'heal-self',owner:p.name,text:`${p.name}: ${m[0]} recupera HP próprio. Valor depende do HP faltante e do clima; ambos desconhecidos, não é bônus defensivo aplicado ao ranking.`});
    if(f.role==='seed')notes.push({kind:'seed',owner:p.name,text:`${p.name}: Leech Seed pode drenar 1/8 do HP máximo do alvo ao fim dos turnos e devolver ao usuário; requer acerto e falha contra Planta.`});
    if(f.role==='setup')notes.push({kind:'setup',owner:p.name,text:`${p.name}: ${m[0]} prepara o próprio usuário para uma ação futura; consome este turno e o benefício depende de sobreviver.`});
-   if(f.role==='status')notes.push({kind:'status',owner:p.name,text:`${p.name}: ${m[0]} tenta aplicar um efeito de status conforme a precisão e as imunidades do alvo; o resultado não é presumido.`});
+   if(f.role==='status'&&!['Toxic','Hypnosis','Thunder Wave'].includes(m[0]))notes.push({kind:'status',owner:p.name,text:`${p.name}: ${m[0]} tenta aplicar um efeito de status conforme a precisão e as imunidades do alvo; o resultado não é presumido.`});
+   if(m[0]==='Rain Dance')notes.push({kind:'weather',owner:p.name,text:`${p.name}: Rain Dance altera o clima do campo por cinco turnos e fortalece golpes de Água. Pode apoiar Waterfall de Gyarados; consome a ação e não causa dano.`});
+   if(m[0]==='Charge')notes.push({kind:'setup',owner:p.name,text:`${p.name}: Charge eleva sua Defesa Especial em 1 estágio e dobra o próximo golpe Elétrico antes de sair; prepara Discharge, mas pode atingir o parceiro e consome a ação.`});
+   if(m[0]==='Discharge')notes.push({kind:'spread-risk',owner:p.name,text:`${p.name}: Discharge atinge todos os demais Pokémon, inclusive o parceiro, e pode paralisar. nenhum outro integrante atual tem Volt Absorb; o plano de turno evita atingir o parceiro.`});
    if(f.role==='debuff')notes.push({kind:'debuff',owner:p.name,text:`${p.name}: ${m[0]} reduz atributos do(s) alvo(s), mas não causa dano. Alcance em duplas: ${f.target==='both-opponents'?'ambos os adversários':'um adversário selecionado'}.`});
    if(m[0]==='Swords Dance')notes.push({kind:'setup',owner:p.name,text:`${p.name}: Swords Dance aumenta o Ataque físico em dois estágios, usa um turno e não impede os dois adversários de focarem nele. Nenhum boost foi aplicado.`});
    if(m[0]==='Calm Mind')notes.push({kind:'setup',owner:p.name,text:`${p.name}: Calm Mind aumenta Ataque Especial e Defesa Especial em um estágio, usa um turno e não impede os dois adversários de focarem nele. Nenhum boost foi aplicado.`});
@@ -99,7 +103,7 @@ function doubleEvaluate(pair,opponents,data){
  const values=matrix.flatMap(row=>row.flatMap(cell=>cell.threats.map(x=>x.multiplier))).sort((a,b)=>b-a);
  const shared=typeSets.map((types,i)=>types.some(type=>pair.every(p=>damageTaken(type,p)>1)));
  const offense=doubleOffense(pair,opponents,data),support=doubleSupport(pair,opponents,data);
- const healing=matrix.filter(row=>row.some(cell=>cell.threats.some(x=>x.abilityImmunity&&x.type==='water'))).length;
+ const healing=matrix.filter(row=>row.some(cell=>cell.threats.some(x=>x.abilityImmunity&&(x.type==='water'||x.type==='electric')))).length;
  const baseKey=[values[0],shared.filter(Boolean).length,...values.slice(1),-healing];
  const stats=pair.map(p=>quickStats(p,data));
  const bulk=stats.every(Boolean)?['hp','def','spd'].flatMap(k=>stats.map(s=>-s[k]).sort((a,b)=>b-a)):null;
@@ -126,14 +130,15 @@ function doubleRankRows(rows){
  });
  return rankings;
 }
-function doublePositionSupport(p,entering,opponents,data){
+function doublePositionSupport(p,entering,partner,opponents,data){
  const options=[];
  if(p.ability==='Intimidate')options.push(entering
   ?'Intimidate pode reduzir o Ataque físico dos dois adversários ao entrar, se forem afetados; não altera golpes especiais.'
   :'Intimidate não é reativado por permanecer em campo; qualquer redução anterior não foi presumida.');
+ if(p.ability==='Volt Absorb')options.push('Volt Absorb anula golpes Elétricos direcionados a Lanturn e pode recuperar 1/4 do HP máximo; não foi presumido que um adversário usará esse tipo.');
  if(p.ability==='Static')options.push('Static pode paralisar quem atingir o usuário com golpe de contato; o ataque e a habilidade adversários são desconhecidos.');
  if(p.ability==='Blaze'||p.ability==='Overgrow')options.push(`${p.ability} pode fortalecer golpes ${p.ability==='Blaze'?'de Fogo':'de Planta'} com HP baixo; HP atual desconhecido, bônus não presumido.`);
- if(p.ability==='Gluttony')options.push('Gluttony altera o limiar de ativação de Berries; item não informado, efeito não presumido.');
+ if(p.ability==='Gluttony')options.push('Gluttony altera o limiar de ativação de Berries; o Life Orb atual não é Berry, então não ativa esse efeito.');
  if(p.ability==='Trace')options.push('Trace copia a habilidade do adversário ao entrar; habilidade adversária desconhecida, benefício não presumido.');
  p.moves.forEach(([name])=>{
   const facts=doubleFacts(name,data);
@@ -145,7 +150,13 @@ function doublePositionSupport(p,entering,opponents,data){
   if(facts.role==='heal-self')options.push(`${name} recupera HP próprio; valor depende do HP faltante e do clima, que não são conhecidos.`);
   if(facts.role==='seed')options.push('Leech Seed drena HP do alvo ao fim dos turnos se acertar; falha contra Planta e não evita ataques neste turno.');
   if(facts.role==='setup')options.push(`${name} prepara o usuário para o próximo turno; consome a ação atual e nenhum boost foi aplicado ao ranking.`);
-  if(facts.role==='status')options.push(`${name} tenta aplicar status; precisão, imunidades e estado do adversário ainda condicionam o efeito.`);
+  if(facts.role==='status'&&!['Toxic','Hypnosis','Thunder Wave'].includes(name))options.push(`${name} tenta aplicar status; precisão, imunidades e estado do adversário ainda condicionam o efeito.`);
+  if(name==='Toxic')options.push('Toxic tenta envenenar gravemente um adversário; não causa dano imediato e depende de precisão, tipo e estado do alvo.');
+  if(name==='Hypnosis')options.push('Hypnosis pode pôr um adversário para dormir com 60% de precisão; imunidades e estado do alvo continuam relevantes.');
+  if(name==='Thunder Wave')options.push('Thunder Wave pode paralisar um adversário com 90% de precisão; não afeta Terra e depende das demais imunidades/condições.');
+  if(name==='Rain Dance')options.push('Rain Dance cria chuva no campo por cinco turnos e fortalece Waterfall de Gyarados; consome a ação e não causa dano.');
+  if(name==='Charge')options.push('Charge eleva a Defesa Especial de Lanturn em um estágio e dobra o próximo golpe Elétrico antes de sair; prepara Discharge, que pode atingir o parceiro.');
+  if(name==='Discharge')options.push(partner.ability==='Volt Absorb'?'Discharge alcança todos os outros Pokémon; o parceiro é imune por Volt Absorb e pode recuperar HP.':'Discharge alcança todos os outros Pokémon, inclusive o parceiro. A análise exclui a jogada se o aliado receber dano; trocas de ação podem evitar o risco.');
   if(facts.role==='debuff')options.push(`${name} reduz atributo(s) do alvo; em duplas atinge ${facts.target==='both-opponents'?'ambos os adversários':'um adversário selecionado'} e não causa dano neste turno.`);
  });
  return options;
@@ -158,7 +169,7 @@ function doublePositionAssessment(candidate,opponents,currentNames,data){
   weakness:threats.filter(t=>t.multiplier>1).length
  };
  const actions=candidate.row.offense.actions.map(a=>a.name?`${a.owner}: ${a.name} contra ${a.targets.map(i=>String.fromCharCode(65+i)).join('/')} (${a.targets.map(i=>quickFactor(a.coverage[i])).join('/')})${a.stab?' com STAB':''}${a.priority&&!a.conditional?' prioridade +'+(a.facts.priority||1):''}`:`${a.owner}: sem ataque sustentado confirmado`);
- const support=candidate.slots.flatMap((p,i)=>doublePositionSupport(p,candidate.changed[i],opponents,data).map(text=>`${p.name}: ${text}`));
+ const support=candidate.slots.flatMap((p,i)=>doublePositionSupport(p,candidate.changed[i],candidate.slots[1-i],opponents,data).map(text=>`${p.name}: ${text}`));
  const outgoing=candidate.changed.map((changed,i)=>changed?currentNames[i]:null).filter(Boolean);
  return {counts,actions,support,outgoing,cost:candidate.count};
 }
@@ -260,7 +271,7 @@ function doubleAnalyze(opponents,team,data,allySlots=['','']){
  const turnPlan=position?doubleTurnPlan(position,opponents,analysisData):null;
  return {valid:true,opponents:typeSets.map(types=>types.slice()),all,rankings,recommendations:eligibleRanks,eligibleCount:eligible.length,pinned:allies.length===1?allies[0]:null,position,turnPlan,warnings};
 }
-function doubleDefenseText(r,opponents){return r.pair.map((p,i)=>`${p.name}: ${r.matrix[i].map((x,j)=>x.threats.map(t=>`${String.fromCharCode(65+j)} ${TYPES[t.type]} ${quickFactor(t.multiplier)}${t.abilityImmunity?' por Water Absorb':t.multiplier===0?' por tipagem':t.solidRock?' com Solid Rock':''}`).join(' · ')).join(' · ')}`).join('; ')+'.'}
+function doubleDefenseText(r,opponents){return r.pair.map((p,i)=>`${p.name}: ${r.matrix[i].map((x,j)=>x.threats.map(t=>`${String.fromCharCode(65+j)} ${TYPES[t.type]} ${quickFactor(t.multiplier)}${t.abilityImmunity?' por habilidade de absorção':t.multiplier===0?' por tipagem':t.solidRock?' com Solid Rock':''}`).join(' · ')).join(' · ')}`).join('; ')+'.'}
 function doubleOffenseText(r){return r.offense.actions.map(a=>a.name?`${a.owner} → ${a.targets.map(i=>String.fromCharCode(65+i)).join(' e ')}: ${a.name} ${a.targets.map(i=>quickFactor(a.coverage[i])).join('/')} ${a.stab?'com STAB ':''}· poder base ${a.facts.power} · ${a.facts.category==='special'?'especial':'físico'} · precisão ${a.facts.accuracy}${a.precision==='bypass'?' (não testa precisão)':''}${a.priority&&!a.conditional?' · prioridade +'+(a.facts.priority||1):''} ${a.conditional?'· condicional ':''}`:`${a.owner}: sem ataque sustentado confirmado`).join('; ')+'.'}
 function doublePairReason(r,opponents,kind){
  const sets=doubleTypeSets(opponents);

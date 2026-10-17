@@ -2,40 +2,186 @@
   "game": "Pokémon Dreamstone Mysteries",
   "team": [
     {
-      "name": "Linoone",
-      "types": ["dark", "normal"],
-      "ability": "Gluttony",
-      "moves": [["Headbutt", "normal"], ["Night Slash", "dark"], ["Pin Missile", "bug"], ["Lick", "ghost"]]
+      "name": "Gyarados",
+      "types": [
+        "water",
+        "flying"
+      ],
+      "level": 32,
+      "nature": "Adamant",
+      "ability": "Intimidate",
+      "item": "Life Orb",
+      "moves": [
+        [
+          "Rain Dance",
+          "water"
+        ],
+        [
+          "Tackle",
+          "normal"
+        ],
+        [
+          "Crunch",
+          "dark"
+        ],
+        [
+          "Waterfall",
+          "water"
+        ]
+      ]
+    },
+    {
+      "name": "Meganium",
+      "types": [
+        "grass"
+      ],
+      "level": 39,
+      "nature": "Bold",
+      "ability": "Overgrow",
+      "item": "Leftovers",
+      "moves": [
+        [
+          "Leech Seed",
+          "grass"
+        ],
+        [
+          "Synthesis",
+          "grass"
+        ],
+        [
+          "Giga Drain",
+          "grass"
+        ],
+        [
+          "Toxic",
+          "poison"
+        ]
+      ]
     },
     {
       "name": "Quilava",
-      "types": ["fire"],
+      "types": [
+        "fire"
+      ],
+      "level": 34,
+      "nature": "Timid",
       "ability": "Blaze",
-      "moves": [["Leer", "normal"], ["Smokescreen", "normal"], ["Flame Wheel", "fire"], ["Quick Attack", "normal"]]
+      "item": "Charcoal",
+      "moves": [
+        [
+          "Leer",
+          "normal"
+        ],
+        [
+          "Smokescreen",
+          "normal"
+        ],
+        [
+          "Flame Wheel",
+          "fire"
+        ],
+        [
+          "Quick Attack",
+          "normal"
+        ]
+      ]
     },
     {
-      "name": "Bayleef",
-      "types": ["grass"],
-      "ability": "Overgrow",
-      "moves": [["Leech Seed", "grass"], ["Synthesis", "grass"], ["Magical Leaf", "grass"], ["Poison Powder", "poison"]]
-    },
-    {
-      "name": "Honedge",
-      "types": ["steel", "ghost"],
-      "ability": "No Guard",
-      "moves": [["Slash", "normal"], ["Night Slash", "dark"], ["Shadow Sneak", "ghost"], ["Aerial Ace", "flying"]]
-    },
-    {
-      "name": "Kirlia",
-      "types": ["psychic", "fairy"],
+      "name": "Gardevoir",
+      "types": [
+        "psychic",
+        "fairy"
+      ],
+      "level": 32,
+      "nature": "Calm",
       "ability": "Trace",
-      "moves": [["Hypnosis", "psychic"], ["Draining Kiss", "fairy"], ["Teleport", "psychic"], ["Psybeam", "psychic"]]
+      "item": "Wise Glasses",
+      "moves": [
+        [
+          "Hypnosis",
+          "psychic"
+        ],
+        [
+          "Draining Kiss",
+          "fairy"
+        ],
+        [
+          "Dazzling Gleam",
+          "fairy"
+        ],
+        [
+          "Psybeam",
+          "psychic"
+        ]
+      ]
     },
     {
-      "name": "Flaaffy",
-      "types": ["electric"],
-      "ability": "Static",
-      "moves": [["Tackle", "normal"], ["Charge", "electric"], ["Thunder Wave", "electric"], ["Thunder Shock", "electric"]]
+      "name": "Lanturn",
+      "types": [
+        "water",
+        "electric"
+      ],
+      "level": 32,
+      "nature": "Modest",
+      "ability": "Volt Absorb",
+      "item": "Leftovers",
+      "moves": [
+        [
+          "Thunder Wave",
+          "electric"
+        ],
+        [
+          "Bubble Beam",
+          "water"
+        ],
+        [
+          "Charge",
+          "electric"
+        ],
+        [
+          "Discharge",
+          "electric"
+        ]
+      ]
+    },
+    {
+      "name": "Linoone",
+      "types": [
+        "dark",
+        "normal"
+      ],
+      "level": 35,
+      "nature": "Jolly",
+      "ability": "Gluttony",
+      "item": "Life Orb",
+      "moves": [
+        [
+          "Headbutt",
+          "normal"
+        ],
+        [
+          "Night Slash",
+          "dark"
+        ],
+        [
+          "Pin Missile",
+          "bug"
+        ],
+        [
+          "Lick",
+          "ghost"
+        ]
+      ]
     }
-  ]
+  ],
+  "version": "Current party and progress confirmed by player on 2026-10-17",
+  "progress": {
+    "location": "Pelluca City",
+    "gym": "Not yet challenged",
+    "quest": "Mayor’s quest accepted",
+    "source": "Player-confirmed on 2026-10-17"
+  },
+  "typeNotes": {
+    "Linoone": "Dark/Normal conforme à confirmação anterior do jogador; a espécie padrão no código da ROM é Normal, portanto a forma/tipagem dessa captura não foi reconciliada com o registro do jogador."
+  }
 }
