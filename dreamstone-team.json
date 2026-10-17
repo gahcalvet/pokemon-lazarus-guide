@@ -10,7 +10,7 @@
       "level": 32,
       "nature": "Adamant",
       "ability": "Intimidate",
-      "item": "Life Orb",
+      "item": "Gyaradosite",
       "moves": [
         [
           "Rain Dance",
@@ -174,7 +174,7 @@
       ]
     }
   ],
-  "version": "Current party and progress confirmed by player on 2026-10-17",
+  "version": "Current party and progress confirmed by player on 2026-10-17; Mega Ring and Gyaradosite confirmed by player on 2026-10-17",
   "progress": {
     "location": "Pelluca City",
     "gym": "Not yet challenged",
@@ -183,5 +183,16 @@
   },
   "typeNotes": {
     "Linoone": "Dark/Normal conforme à confirmação anterior do jogador; a espécie padrão no código da ROM é Normal, portanto a forma/tipagem dessa captura não foi reconciliada com o registro do jogador."
+  },
+  "megaEvolution": {
+    "megaRing": "confirmed",
+    "primaryMega": "Gyarados",
+    "gyaradosite": {
+      "status": "confirmed",
+      "heldBy": "Gyarados",
+      "replaces": "Life Orb",
+      "source": "Player confirmed 2026-10-17"
+    },
+    "note": "Mega Evolution is situational; the site compares the normal and Mega forms by selected opponent types and ROM-confirmed form data."
   }
 }
