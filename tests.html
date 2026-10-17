@@ -2,7 +2,7 @@
 <script src="types.js?v=6"></script><script src="ranking.js?v=12"></script><script src="doubles.js?v=13"></script><script src="dreamstone-tests.js?v=2"></script>
 <script>
 Promise.all([fetch('team.json?v=12').then(r=>r.json()),fetch('battle-data.json?v=12').then(r=>r.json()),fetch('dreamstone-team.json?v=3').then(r=>r.json()),fetch('dreamstone-battle-data.json?v=2').then(r=>r.json())]).then(([lazarus,battleData,dreamstone,dreamstoneData])=>{
- Object.assign(dreamstone.team,{progress:dreamstone.progress,typeNotes:dreamstone.typeNotes});
+ Object.assign(dreamstone.team,{progress:dreamstone.progress,typeNotes:dreamstone.typeNotes,megaEvolution:dreamstone.megaEvolution});
  const tests=[],check=(name,fn)=>{if(!fn())throw Error(name);tests.push('✓ '+name)};
  try{
   check('Lazarus mantém os seis Pokémon confirmados',()=>lazarus.team.map(p=>p.name).join('|')==='Torracat|Aegislash|Gliscor|Gardevoir|Carracosta|Lapras');
