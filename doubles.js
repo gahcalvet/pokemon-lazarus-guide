@@ -243,6 +243,15 @@ function doubleTurnPlan(position,opponents,data){
   if(facts.some(f=>f.role==='protect'))notes.push(`${p.name}: Protect pode proteger apenas o usuário; sucesso em usos consecutivos não é garantido.`);
   const setup=facts.find(f=>f.name==='Swords Dance'||f.name==='Calm Mind');
   if(setup)notes.push(`${p.name}: ${setup.name} é uma opção de setup que consome a ação; nenhum boost foi presumido.`);
+  facts.forEach(f=>{
+   if(f.name==='Rain Dance')notes.push(`${p.name}: Rain Dance altera o clima por cinco turnos e fortalece Waterfall de Gyarados; é uma ação de suporte, não dano imediato.`);
+   if(f.name==='Charge')notes.push(`${p.name}: Charge aumenta Defesa Especial em 1 estágio e dobra o próximo golpe Elétrico; Discharge alcança o parceiro, então não foi selecionado como ataque seguro.`);
+   if(f.name==='Leech Seed')notes.push(`${p.name}: Leech Seed pode drenar 1/8 do HP máximo ao fim dos turnos e curar o usuário; falha contra Planta e não causa dano imediato.`);
+   if(f.name==='Synthesis')notes.push(`${p.name}: Synthesis recupera HP do usuário; a quantidade depende do clima e do HP faltante, que não são conhecidos.`);
+   if(f.name==='Toxic')notes.push(`${p.name}: Toxic tenta envenenar gravemente um adversário, mas não causa dano imediato e depende de acerto e imunidades.`);
+   if(f.name==='Hypnosis')notes.push(`${p.name}: Hypnosis tem 60% de precisão contra um alvo selecionado; sono e imunidades do alvo não são conhecidos.`);
+   if(f.name==='Thunder Wave')notes.push(`${p.name}: Thunder Wave tem 90% de precisão contra um alvo selecionado; não afeta Terra e não causa dano.`);
+  });
  });
  return {pattern:position.pattern,actions,swaps,future:null,notes,fakeOut};
 }
