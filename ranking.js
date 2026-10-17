@@ -149,7 +149,8 @@ function individualActionRanking(types,currentName,team,data,fakeOutAvailable=nu
 function dreamstoneGyaradosFormAdvice(types,data,team=[]){
  const forms=data.megaForms?.Gyarados;if(!forms)return '';
  const normal={types:forms.normal.types,ability:forms.normal.ability},mega={types:forms.mega.types,ability:forms.mega.ability};
- const normalRisk=Math.max(...types.map(t=>damageTaken(t,normal))),megaRisk=Math.max(...types.map(t=>damageTaken(t,mega)),0),label=types.map(t=>TYPES[t]).join(' / ');\n const safer=team.filter(p=>p.name!=='Gyarados').map(p=>({name:p.name,risk:Math.max(...types.map(t=>damageTaken(t,p)))})).filter(p=>p.risk<normalRisk).sort((a,b)=>a.risk-b.risk);
+ const normalRisk=Math.max(...types.map(t=>damageTaken(t,normal))),megaRisk=Math.max(...types.map(t=>damageTaken(t,mega)),0),label=types.map(t=>TYPES[t]).join(' / ');
+ const safer=team.filter(p=>p.name!=='Gyarados').map(p=>({name:p.name,risk:Math.max(...types.map(t=>damageTaken(t,p)))})).filter(p=>p.risk<normalRisk).sort((a,b)=>a.risk-b.risk);
  const risk=normalRisk>megaRisk?'Pelos tipos selecionados, maior exposição cai de '+quickFactor(normalRisk)+' para '+quickFactor(megaRisk)+'.':megaRisk>normalRisk?'Pelos tipos selecionados, maior exposição sobe de '+quickFactor(normalRisk)+' para '+quickFactor(megaRisk)+'.':'Pelos tipos selecionados, a maior exposição fica igual ('+quickFactor(normalRisk)+').';
  let decision;
  if(types.includes('ground'))decision='MANTER NORMAL POR ENQUANTO: Gyarados normal é imune a Terra pelo tipo Voador; Mega Gyarados perde essa imunidade.';
